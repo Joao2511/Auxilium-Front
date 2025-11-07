@@ -1,0 +1,21 @@
+<section class="p-4">
+  <div class="flex items-center justify-between mb-3">
+    <h1 class="text-xl font-bold">Minhas Disciplinas</h1>
+    <button id="btnNovaDisc" class="px-4 py-2 rounded-full bg-[#8E24AA] text-white">Nova disciplina</button>
+  </div>
+
+  <div id="listaDisciplinas" class="space-y-3"></div>
+</section>
+
+<template id="tpl-disciplina">
+  <div class="modern-card p-4 flex items-center justify-between">
+    <div>
+      <h3 class="font-semibold text-lg __nome"></h3>
+      <div class="text-xs text-gray-500">Código: <span class="__codigo font-mono"></span></div>
+    </div>
+    <div class="flex gap-2">
+      <button class="px-3 py-2 rounded-full bg-gray-100" data-copy>Copiar código</button>
+      <a class="px-3 py-2 rounded-full bg-[#8E24AA] text-white" data-navigo data-open>Entrar</a>
+    </div>
+  </div>
+</template>

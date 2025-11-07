@@ -1,0 +1,43 @@
+<section class="p-4">
+  <h1 class="text-xl font-bold mb-3">Entregas</h1>
+  <div id="listaEntregas" class="space-y-3"></div>
+</section>
+
+<template id="tpl-entrega">
+  <div class="modern-card p-4">
+    <div class="flex justify-between items-center">
+      <div>
+        <div class="font-semibold __aluno"></div>
+        <div class="text-xs text-gray-500">
+          Status:
+          <span class="__status font-semibold"></span> •
+          Submissão:
+          <span class="__quando"></span>
+        </div>
+      </div>
+      <a
+        class="px-3 py-2 rounded-full bg-gray-100 hover:bg-gray-200 transition __download"
+        target="_blank"
+      >Baixar</a>
+    </div>
+
+    <div class="mt-3 flex gap-2">
+      <input
+        class="border rounded px-2 py-1 w-24 __nota"
+        type="number"
+        min="0"
+        step="0.1"
+        placeholder="Nota"
+      />
+      <input
+        class="border rounded px-2 py-1 flex-1 __obs"
+        placeholder="Observações (opcional)"
+      />
+      <button
+        class="px-4 py-2 rounded-full bg-[#8E24AA] hover:bg-[#7b1fa2] text-white __salvar transition"
+      >
+        Salvar
+      </button>
+    </div>
+  </div>
+</template>

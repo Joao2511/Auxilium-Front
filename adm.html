@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel Administrativo - Auxilium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gray-100 min-h-screen">
+    <header class="bg-white shadow-sm border-b">
+      <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <img
+            src="../assets/images/logos/logo_preta.png"
+            alt="Auxilium"
+            class="h-10"
+          />
+          <div>
+            <h1 class="text-xl font-bold text-gray-800">Painel Administrativo</h1>
+            <p class="text-sm text-gray-500">Aprovação de Professores</p>
+          </div>
+        </div>
+        <button
+          id="btn-sair"
+          class="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+        >
+          <i class="fas fa-sign-out-alt mr-2"></i>Sair
+        </button>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-lg">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-yellow-700 font-medium">Pendentes</p>
+              <p class="text-2xl font-bold text-yellow-900" id="stat-pendentes">
+                0
+              </p>
+            </div>
+            <i class="fas fa-clock text-3xl text-yellow-500"></i>
+          </div>
+        </div>
+
+        <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-green-700 font-medium">Aprovadas</p>
+              <p class="text-2xl font-bold text-green-900" id="stat-aprovadas">
+                0
+              </p>
+            </div>
+            <i class="fas fa-check-circle text-3xl text-green-500"></i>
+          </div>
+        </div>
+
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-red-700 font-medium">Rejeitadas</p>
+              <p class="text-2xl font-bold text-red-900" id="stat-rejeitadas">
+                0
+              </p>
+            </div>
+            <i class="fas fa-times-circle text-3xl text-red-500"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow">
+        <div class="p-6 border-b">
+          <h2 class="text-lg font-semibold text-gray-800">
+            Solicitações Pendentes
+          </h2>
+        </div>
+
+        <div id="lista-solicitacoes" class="divide-y">
+        </div>
+      </div>
+    </main>
+
+    <script type="module">
+      import { supabase } from "../utils/supabaseClient.js";
+
+      async function verificarAdmin() {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (!session) {
+          window.location.href = "login.html";
+          return false;
+        }
+
+        const { data: usuario } = await supabase
+          .from("usuario")
+          .select("id_tipo")
+          .eq("id_usuario", session.user.id)
+          .single();
+
+        if (!usuario || usuario.id_tipo !== 3) {
+          alert("Acesso negado! Você não é administrador.");
+          window.location.href = "home.html";
+          return false;
+        }
+
+        return true;
+      }
+
+      async function carregarSolicitacoes() {
+        const { data, error } = await supabase
+          .from("solicitacao_professor")
+          .select(
+            `
+            id_solicitacao,
+            justificativa,
+            data_solicitacao,
+            status,
+            usuario:id_usuario (
+              id_usuario,
+              nome_completo,
+              email_institucional
+            )
+          `
+          )
+          .order("data_solicitacao", { ascending: false });
+
+        if (error) {
+          console.error("Erro ao carregar:", error);
+          return;
+        }
+
+        const pendentes = data.filter((s) => s.status === "pendente").length;
+        const aprovadas = data.filter((s) => s.status === "aprovada").length;
+        const rejeitadas = data.filter((s) => s.status === "rejeitada").length;
+
+        document.getElementById("stat-pendentes").textContent = pendentes;
+        document.getElementById("stat-aprovadas").textContent = aprovadas;
+        document.getElementById("stat-rejeitadas").textContent = rejeitadas;
+
+        const lista = document.getElementById("lista-solicitacoes");
+        lista.innerHTML = "";
+
+        const solicitacoesPendentes = data.filter((s) => s.status === "pendente");
+
+        if (solicitacoesPendentes.length === 0) {
+          lista.innerHTML = `
+            <div class="p-8 text-center text-gray-500">
+              <i class="fas fa-inbox text-4xl mb-2"></i>
+              <p>Nenhuma solicitação pendente</p>
+            </div>
+          `;
+          return;
+        }
+
+        solicitacoesPendentes.forEach((s) => {
+          const card = document.createElement("div");
+          card.className = "p-6 hover:bg-gray-50 transition";
+          card.innerHTML = `
+            <div class="flex flex-col md:flex-row justify-between gap-4">
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-2">
+                  <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user text-purple-600"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-semibold text-gray-800">${s.usuario.nome_completo}</h3>
+                    <p class="text-sm text-gray-500">${s.usuario.email_institucional}</p>
+                  </div>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg mt-3">
+                  <p class="text-sm text-gray-700 font-medium mb-1">Justificativa:</p>
+                  <p class="text-sm text-gray-600">${s.justificativa}</p>
+                </div>
+                <p class="text-xs text-gray-400 mt-2">
+                  <i class="fas fa-calendar-alt mr-1"></i>
+                  ${new Date(s.data_solicitacao).toLocaleString("pt-BR")}
+                </p>
+              </div>
+
+              <div class="flex md:flex-col gap-2">
+                <button
+                  onclick="aprovar('${s.id_solicitacao}', '${s.usuario.id_usuario}')"
+                  class="flex-1 md:flex-none px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                >
+                  <i class="fas fa-check mr-2"></i>Aprovar
+                </button>
+                <button
+                  onclick="rejeitar('${s.id_solicitacao}', '${s.usuario.id_usuario}')"
+                  class="flex-1 md:flex-none px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                >
+                  <i class="fas fa-times mr-2"></i>Rejeitar
+                </button>
+              </div>
+            </div>
+          `;
+          lista.appendChild(card);
+        });
+      }
+
+      window.aprovar = async (idSolicitacao, idUsuario) => {
+        const obs = prompt(
+          "Deseja deixar uma observação? (Opcional)",
+          "Solicitação aprovada com sucesso."
+        );
+
+        try {
+          await supabase
+            .from("solicitacao_professor")
+            .update({
+              status: "aprovada",
+              data_resposta: new Date().toISOString(),
+              observacoes_admin: obs,
+            })
+            .eq("id_solicitacao", idSolicitacao);
+
+          await supabase
+            .from("usuario")
+            .update({ status_conta: "ativo" })
+            .eq("id_usuario", idUsuario);
+
+          alert("✅ Professor aprovado com sucesso!");
+          carregarSolicitacoes();
+        } catch (error) {
+          console.error(error);
+          alert("❌ Erro ao aprovar");
+        }
+      };
+
+      window.rejeitar = async (idSolicitacao, idUsuario) => {
+        const motivo = prompt("Por que está rejeitando esta solicitação?");
+        if (!motivo) return;
+
+        try {
+          await supabase
+            .from("solicitacao_professor")
+            .update({
+              status: "rejeitada",
+              data_resposta: new Date().toISOString(),
+              observacoes_admin: motivo,
+            })
+            .eq("id_solicitacao", idSolicitacao);
+
+          await supabase
+            .from("usuario")
+            .update({ status_conta: "inativo" })
+            .eq("id_usuario", idUsuario);
+
+          alert("✅ Solicitação rejeitada");
+          carregarSolicitacoes();
+        } catch (error) {
+          console.error(error);
+          alert("❌ Erro ao rejeitar");
+        }
+      };
+
+      document.getElementById("btn-sair").addEventListener("click", async () => {
+        await supabase.auth.signOut();
+        window.location.href = "login.html";
+      });
+
+      (async () => {
+        const isAdmin = await verificarAdmin();
+        if (isAdmin) {
+          carregarSolicitacoes();
+        }
+      })();
+    </script>
+  </body>
+</html>

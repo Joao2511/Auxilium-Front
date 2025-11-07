@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+    content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Auxilium</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <link rel="stylesheet" href="./style/global.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.serializeJSON/3.2.1/jquery.serializejson.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.0/dist/css/tom-select.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.0/dist/js/tom-select.complete.min.js"></script>
+
+  <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+  <script src="https://unpkg.com/@capacitor/core@7/dist/capacitor.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <link rel="modulepreload" href="./app.js">
+  <link rel="modulepreload" href="./controllers/homeController.js">
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/navigo@8.11.1/+esm">
+
+
+  <meta name="theme-color" content="#ffffff">
+  <script>
+    const { NavigationBar } = Capacitor.Plugins
+    console.log(Capacitor.Plugins);
+
+
+    NavigationBar.setNavigationBarColor({
+      color: '#ffffff',
+      darkButtons: true
+    })
+
+    async function configureMobileUI(theme) {
+      try {
+        const { Device, EdgeToEdge, StatusBar, PushNotifications } = Capacitor.Plugins;
+        const info = await Device.getInfo();
+
+        const isLight = theme === 'light';
+
+        if (info.platform === 'android') {
+          await EdgeToEdge.setBackgroundColor({
+            color: isLight ? '#f9fafb' : '#171717'
+          });
+
+          await StatusBar.setStyle({
+            style: isLight ? 'LIGHT' : 'DARK'
+          });
+
+          StatusBar.setStyle({ style: Style.Dark });
+
+          await EdgeToEdge.setEdgeToEdge({
+            edgeToEdge: true
+          });
+        } else {
+          StatusBar.setOverlaysWebView({ overlay: false });
+
+          await StatusBar.setBackgroundColor({
+            color: isLight ? '#ffffff' : '#171717'
+          })
+
+          StatusBar.setStyle({ style: Style.Dark });
+        }
+      } catch (error) {
+        console.warn('Error configuring mobile UI:', error);
+      }
+    }
+
+    (function () {
+      const savedPreference = localStorage.getItem('themePreference');
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = savedPreference === 'dark' ||
+        (savedPreference === 'system' && systemPrefersDark) ||
+        (savedPreference === null && systemPrefersDark);
+
+      if (window.Capacitor) {
+        configureMobileUI('light');
+      }
+    })();
+
+    document.addEventListener('themeChanged', async (event) => {
+      if (window.Capacitor) {
+        await configureMobileUI(event.detail);
+      }
+    });
+  </script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#8E24AA',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            },
+            dark: {
+              800: '#1e293b',
+              900: '#0f172a',
+            },
+            availability: { high: '#10b981', medium: '#f59e0b', low: '#8b5cf6', none: '#ef4444' }
+          },
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+        }
+      }
+    }
+  </script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --sat: env(safe-area-inset-top, 0px);
+      --sab: env(safe-area-inset-bottom, 0px);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      margin: 0;
+      padding: 0;
+    }
+
+    .mobile-container {
+      width: 100%;
+      max-width: 428px;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+      background-color: #f8fafc;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+
+    body.dark .mobile-container {
+      background-color: #0f172a;
+    }
+
+    .content-area {
+      height: 100%;
+      overflow-y: auto;
+      padding-top: var(--sat);
+      padding-bottom: calc(80px + var(--sab));
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      background-color: rgb(202, 0, 0);
+      padding-bottom: env(safe-area-inset-bottom);
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark .bottom-nav {
+      background-color: #000000;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    #app {
+      padding-bottom: 20px;
+    }
+
+    .content-area::-webkit-scrollbar {
+      display: none;
+    }
+
+    .content-area {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .nav-item.active {
+      color: #8E24AA;
+    }
+
+    body.dark .nav-item.active {
+      color: #8E24AA;
+    }
+
+    @media (max-width: 428px) {
+      .mobile-container {
+        max-width: 100%;
+        border-radius: 0;
+      }
+
+      .bottom-nav {
+        max-width: 100%;
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+      }
+
+      to {
+        opacity: 0;
+      }
+    }
+
+    .toast-slide-in {
+      animation: slideIn 0.3s ease-out forwards;
+    }
+
+    .toast-fade-out {
+      animation: fadeOut 0.3s ease-out forwards;
+    }
+
+    .toast-shadow {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .toast-error {
+      border-left: 4px solid #8E24AA;
+    }
+
+    .toast-success {
+      border-left: 4px solid #10b981;
+    }
+
+    .toast-warning {
+      border-left: 4px solid #f59e0b;
+    }
+
+    .custom-bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      background-color: #f9fafc;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark .custom-bottom-nav {
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .custom-nav-container {
+      max-width: 428px;
+      margin: 0 auto;
+      padding: 0;
+    }
+
+    .dark .custom-nav-container {
+      max-width: 428px;
+      margin: 0 auto;
+      padding: 0;
+      background-color: #171717;
+    }
+
+    .custom-nav-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+    }
+
+    .custom-nav-item {
+      flex: 1;
+      padding: 12px 8px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: inherit;
+      font-size: 12px;
+      transition: color 0.2s ease;
+    }
+
+    .custom-icon {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    .custom-label {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 12px;
+    }
+
+    .custom-nav-item {
+      color: #262626 !important;
+    }
+
+    .dark .custom-nav-item {
+      color: #e5e5e5 !important;
+    }
+
+    .custom-nav-item.active {
+      border-top-width: 3px;
+      border-top-color: #8E24AA;
+      color: #8E24AA !important;
+      transition: 0.3s ease-in;
+    }
+
+    .dark .custom-nav-item.active {
+      border-top-width: 3px;
+      border-top-color: #8E24AA;
+      color: #8E24AA !important;
+      transition: 0.3s ease-in;
+    }
+
+    @media (max-width: 428px) {
+      .custom-bottom-nav {
+        max-width: 100%;
+      }
+
+      .custom-nav-container {
+        padding: 0 8px;
+      }
+    }
+
+
+    @keyframes logoEnter {
+      0% {
+        transform: scale(0);
+        opacity: 0;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes logoPosition {
+      0% {
+        transform: translateX(0px);
+      }
+
+      100% {
+        transform: translateX(-80px);
+      }
+    }
+
+    @keyframes moveToLeft {
+      0% {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      100% {
+        left: calc(50% - 0px);
+        transform: translateX(-50%);
+      }
+    }
+
+    @keyframes circleDissolve {
+      0% {
+        border-width: 80px;
+        transform: scale(0);
+      }
+
+      50% {
+        border-width: 15px;
+      }
+
+      90% {
+        opacity: 1;
+      }
+
+      100% {
+        border-width: 0;
+        transform: scale(1);
+        opacity: 0;
+      }
+    }
+
+    @keyframes textReveal {
+      0% {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateX(-30px);
+      }
+    }
+
+    .logo-animation-wrapper {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .logo-splash {
+      animation: zoomIn 1.2s ease-out forwards;
+      transform-origin: center center;
+      opacity: 0;
+    }
+
+    @keyframes zoomIn {
+      0% {
+        transform: scale(0.3);
+        opacity: 0;
+      }
+
+      40% {
+        transform: scale(1.1);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .circle-splash {
+      animation:
+        logoEnter 0.8s ease-in-out forwards,
+        circleDissolve 2s ease-out forwards;
+    }
+
+    .text-title {
+      animation: textReveal 1s ease-out 1.8s forwards;
+    }
+
+    .text-title-sub {
+      animation: textReveal 1s ease-out 2.1s forwards;
+    }
+
+    .splash-hidden {
+      animation: fadeOut 0.5s ease-out forwards;
+      pointer-events: none;
+    }
+
+    body.page-loading {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body.no-scroll {
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+    }
+
+    @keyframes slideUp {
+      0% {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .animate-slide-up {
+      animation: slideUp 0.3s ease-out forwards;
+    }
+
+    @keyframes slideDownOut {
+      0% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+    }
+
+    .animate-slide-down {
+      animation: slideDownOut 0.3s ease-in forwards;
+    }
+
+
+    @keyframes toastDown {
+      0% {
+        transform: translateY(-50%);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(0);
+        opacity: 0;
+      }
+    }
+
+    @keyframes toastUp {
+      0% {
+        transform: translateY(0);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateY(-50%);
+        opacity: 1;
+      }
+    }
+
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .connecting-animation {
+      animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    .modal-enter {
+      animation: modalEnter 0.3s ease-out forwards;
+    }
+
+    @keyframes modalEnter {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-backdrop {
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+    }
+
+    body.page-loading #app,
+    body.page-loading nav.bottom-nav,
+    body.page-loading .custom-bottom-nav {
+      display: none !important;
+    }
+
+    .tabs-disabled .custom-bottom-nav {
+      pointer-events: none;
+    }
+
+    .tabs-disabled .custom-bottom-nav .custom-nav-item {
+      filter: grayscale(1);
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      transition: all 0.3s ease;
+    }
+
+    body.dark {
+      background-color: #0f172a;
+      color: #ffffff !important;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .dark .glass-card {
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(71, 85, 105, 0.25);
+    }
+
+    .modern-card {
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .modern-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .dark .modern-card {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .dark .modern-card:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .status-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+    }
+
+    .slider-container {
+      scroll-snap-type: x mandatory;
+    }
+
+    .slider-slide {
+      scroll-snap-align: start;
+      flex: 0 0 100%;
+    }
+
+    .nav-item {
+      position: relative;
+    }
+
+    .nav-item.active::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: #8E24AA;
+    }
+
+    .dark .nav-item.active::after {
+      background-color: #38bdf8;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 3px;
+    }
+
+    .dark ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .dark ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .hidden-value {
+      filter: blur(6px);
+      user-select: none;
+      opacity: 0.5;
+    }
+
+    .stats-label {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .dark .icon-white,
+    .dark .icon-white * {
+      color: white !important;
+    }
+
+    .dark,
+    .dark h1,
+    .dark h2,
+    .dark h3,
+    .dark p,
+    .dark span,
+    .dark div {
+      color: white !important;
+    }
+
+    .dark .status-badge {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: white !important;
+    }
+
+    .dark .stats-label {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      color: white !important;
+    }
+
+    .dark .icon-bg {
+      background-color: rgba(30, 41, 59, 0.8) !important;
+    }
+
+    .dark ::placeholder {
+      color: rgba(255, 255, 255, 0.6) !important;
+    }
+
+    .dark .search-input {
+      background-color: #1e293b !important;
+      border-color: #334155 !important;
+      color: white !important;
+    }
+
+    .dark .bottom-nav {
+      background-color: #1e293b !important;
+      border-color: #334155 !important;
+    }
+
+    .dark .nav-item:not(.active) i {
+      color: #94a3b8 !important;
+    }
+
+    .dark .nav-item:not(.active) span {
+      color: #94a3b8 !important;
+    }
+
+    .icon-blue {
+      color: #8E24AA !important;
+    }
+
+    .icon-green {
+      color: #10b981 !important;
+    }
+
+    .icon-yellow {
+      color: #f59e0b !important;
+    }
+
+    .icon-red {
+      color: #ef4444 !important;
+    }
+
+    .icon-purple {
+      color: #8b5cf6 !important;
+    }
+
+    .quick-action-icon {
+      color: #8E24AA !important;
+    }
+
+    .dark .quick-action-icon {
+      color: #8E24AA !important;
+    }
+
+    .time-card {
+      border-left: 4px solid;
+      padding-left: 12px;
+    }
+
+    .time-card.entrada {
+      border-color: #10b981;
+    }
+
+    .time-card.saida {
+      border-color: #ef4444;
+    }
+
+    .time-card.intervalo {
+      border-color: #f59e0b;
+    }
+
+    .calendar-day {
+      width: 14.28%;
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    .calendar-day.active {
+      background-color: #8E24AA;
+      color: white !important;
+    }
+
+    .calendar-day.today {
+      border: 2px solid #8E24AA;
+    }
+
+    .calendar-day.has-issue {
+      position: relative;
+    }
+
+    .calendar-day.has-issue::after {
+      content: '';
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: #ef4444;
+    }
+
+    .dark .calendar-day.active {
+      background-color: #38bdf8;
+    }
+
+    .dark .calendar-day.today {
+      border-color: #38bdf8;
+    }
+
+    .progress-container {
+      height: 8px;
+      background-color: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .dark .progress-container {
+      background-color: #334155;
+    }
+
+    .progress-bar {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-bar.positive {
+      background-color: #10b981;
+    }
+
+    .progress-bar.negative {
+      background-color: #ef4444;
+    }
+
+    .skeleton {
+      background-color: #e2e8f0;
+      background-image: linear-gradient(90deg, #e2e8f0 0px, #f8fafc 40px, #e2e8f0 80px);
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.5s infinite;
+      border-radius: 0.25rem;
+    }
+
+    .dark .skeleton {
+      background-color: #334155;
+      background-image: linear-gradient(90deg, #334155 0px, #1e293b 40px, #334155 80px);
+    }
+
+    @keyframes skeleton-loading {
+      0% {
+        background-position: -200% 0;
+      }
+
+      100% {
+        background-position: 200% 0;
+      }
+    }
+
+    .splash-hidden {
+      opacity: 0;
+      transition: opacity .5s ease;
+    }
+
+    .page-loading {
+      overflow: hidden;
+    }
+
+    .tabs-disabled .custom-bottom-nav {
+      pointer-events: none;
+      opacity: .6;
+    }
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+      overscroll-behavior-y: none;
+    }
+
+    .app-shell {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      background: #f8fafc;
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    body.dark .app-shell {
+      background: #0f172a;
+    }
+
+    .app-shell .content-area {
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: auto !important;
+      -webkit-overflow-scrolling: touch;
+      padding-top: var(--sat);
+      padding-bottom: 12px;
+    }
+
+    .app-shell .bottom-nav,
+    .app-shell .custom-bottom-nav {
+      position: sticky !important;
+      top: auto !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      contain: layout paint;
+      z-index: 10;
+    }
+
+    @supports (height: 100svh) {
+      .app-shell {
+        height: 100svh;
+      }
+    }
+  </style>
+
+  </style>
+</head>
+
+
+
+<body class="bg-gray-50">
+  <div class="app-shell">
+    <div class="content-area">
+      <main id="app" class="container mx-auto pb-[100px]"></main>
+    </div>
+
+    <nav id="nav-aluno" class="bottom-nav custom-bottom-nav role-nav hidden">
+  <div class="custom-nav-container">
+    <div class="custom-nav-flex">
+      
+      <a href="/home" data-route="/home" data-navigo class="custom-nav-item group">
+        <i class="fas fa-home custom-icon"></i>
+        <span class="custom-label">Início</span>
+      </a>
+
+      <a href="/agenda" data-route="/agenda" data-navigo class="custom-nav-item group">
+        <i class="fas fa-calendar custom-icon"></i>
+        <span class="custom-label">Agenda</span>
+      </a>
+
+      <a href="/chats" data-route="/chats" data-navigo class="custom-nav-item group">
+        <i class="fas fa-book nav-icon custom-icon"></i>
+        <span class="custom-label">Chats</span>
+      </a>
+
+      <a href="/ranking" data-route="/ranking" data-navigo class="custom-nav-item group">
+        <i class="fas fa-trophy custom-icon"></i>
+        <span class="custom-label">Ranking</span>
+      </a>
+
+      <a href="/config" data-route="/config" data-navigo class="custom-nav-item group">
+        <i class="fa-solid fa-gear custom-icon"></i>
+        <span class="custom-label">Config</span>
+      </a>
+
+       <a href="/disciplinas" data-route="/disciplinas" data-navigo class="custom-nav-item group">
+        <i class="fas fa-book-open custom-icon"></i>
+        <span class="custom-label">Disciplinas</span>
+      </a>
+
+    </div>
+  </div>
+</nav>
+
+<nav id="nav-professor" class="bottom-nav custom-bottom-nav role-nav hidden">
+  <div class="custom-nav-container">
+    <div class="custom-nav-flex">
+      
+      <a href="/profhome" data-route="/profhome" data-navigo class="custom-nav-item group">
+        <i class="fas fa-chalkboard-teacher custom-icon"></i>
+        <span class="custom-label">Início</span>
+      </a>
+      
+      <a href="/profdisciplinas" data-route="/profdisciplinas" data-navigo class="custom-nav-item group">
+        <i class="fas fa-book custom-icon"></i>
+        <span class="custom-label">Disciplinas</span>
+      </a>
+      
+      <a href="/config" data-route="/config" data-navigo class="custom-nav-item group">
+        <i class="fa-solid fa-gear custom-icon"></i>
+        <span class="custom-label">Config</span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+
+    <div id="toastContainer" class="fixed bottom-16 left-0 right-0 flex flex-col items-center z-[20000] px-4"></div>
+
+    <div id="confirm-atendimento-modal"
+      class="fixed inset-0 z-[6000] hidden bg-black bg-opacity-30 flex items-end justify-center">
+    </div>
+  </div>
+
+
+  <script>
+    window.paintStaffSkeleton = function () {
+      const tpl = document.getElementById('agenda-staff-skeleton');
+      const app = document.getElementById('app');
+      if (!tpl || !app) return false;
+      app.appendChild(tpl.content.cloneNode(true));
+      document.body.classList.add('tabs-disabled');
+      return true;
+    };
+  </script>
+
+  <script type="module">
+    import Utils from "./utils.js";
+    import { router, mountApp } from './app.js';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const Plugins = (window.Capacitor && Capacitor.Plugins) ? Capacitor.Plugins : {};
+      const { PushNotifications, FCM, LocalNotifications, Preferences } = Plugins;
+
+      const navItemscustom = document.querySelectorAll('.custom-nav-item');
+
+      function closeContainerConfirmation() {
+        const modal = document.getElementById("confirm-atendimento-modal");
+        const modalContent = document.getElementById("modal-content");
+        document.body.classList.remove("no-scroll");
+        if (modalContent) modalContent.classList.add("animate-slide-down");
+        setTimeout(() => {
+          modal?.classList.add("hidden");
+          modalContent?.classList.remove("animate-slide-down");
+          if (modalContent) modalContent.style.transform = "";
+        }, 300);
+      }
+
+      let pendingNavigationHref;
+
+      navItemscustom.forEach(item => {
+        item.addEventListener('click', function (e) {
+          e.preventDefault();
+          const isInAtendimento = window.location.hash.replace('#', '').split('/')[1];
+          const targetRoute = this.getAttribute('data-route');
+
+          if (isInAtendimento === 'atendimento') {
+            pendingNavigationHref = `${targetRoute}`;
+            const modalContainer = document.getElementById("confirm-atendimento-modal");
+            modalContainer.innerHTML = `
+              <div id="modal-content" class="bg-white rounded-t-2xl shadow-lg w-full animate-slide-up transform transition-all duration-300 ease-out">
+                <div class="w-full flex justify-center mt-2">
+                  <div class="h-1.5 w-12 bg-gray-300 rounded-full"></div>
+                </div>
+                <div class="py-8 px-6 space-y-6">
+                  <div class="text-center space-y-2">
+                    <h3 class="text-2xl font-bold text-gray-900">Sair do atendimento?</h3>
+                    <p class="text-gray-600 text-sm leading-5">Tem certeza de que deseja sair do atendimento atual?</p>
+                  </div>
+                  <div class="flex flex-col gap-2">
+                    <button id="confirm-atendimento" class="w-full py-3 text-white bg-[#8E24AA] rounded-full font-semibold hover:bg-[#0c8dc7] transition-colors">
+                      <span class="flex items-center justify-center gap-2">
+                        Confirmar
+                        <div id="spinner" class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin hidden"></div>
+                      </span>
+                    </button>
+                    <button id="cancel-atendimento" class="w-full py-3 text-[#8E24AA] bg-transparent font-medium hover:bg-gray-100 rounded-full transition-colors">Cancelar</button>
+                  </div>
+                </div>
+              </div>
+            `;
+            document.body.classList.add("no-scroll");
+            modalContainer.classList.remove("hidden");
+
+            const modal = document.getElementById("confirm-atendimento-modal");
+            const modalContent = document.getElementById("modal-content");
+            modal.addEventListener("click", (e2) => { if (e2.target === modal) closeContainerConfirmation(); });
+
+            document.getElementById("cancel-atendimento").addEventListener("click", closeContainerConfirmation);
+            document.getElementById("confirm-atendimento").addEventListener("click", async () => {
+              const button = document.getElementById("confirm-atendimento");
+              const spinner = document.getElementById("spinner");
+              button.disabled = true;
+              spinner.classList.remove("hidden");
+
+              button.disabled = false;
+              spinner.classList.add("hidden");
+              closeContainerConfirmation();
+
+              if (pendingNavigationHref) {
+                window.router?.navigate(`${pendingNavigationHref}`);
+                location.hash = '#' + pendingNavigationHref;
+                pendingNavigationHref = null;
+              }
+            });
+            return;
+          }
+
+          navItemscustom.forEach(navItem => navItem.classList.remove('active'));
+          this.classList.add('active');
+
+          window.router?.navigate(`${targetRoute}`);
+          location.hash = '#' + targetRoute;
+        });
+      });
+
+      async function checkConnection() {
+        try {
+          await fetch("https://www.google.com", { mode: "no-cors" });
+          return true;
+        } catch { return false; }
+      }
+
+      function showOfflineModal() {
+        const modalContainer = document.getElementById("confirm-atendimento-modal");
+        modalContainer.innerHTML = `
+          <div id="modal-content" class="bg-white rounded-t-2xl shadow-lg w-full animate-slide-up transform transition-all duration-300 ease-out">
+            <div class="w-full flex justify-center mt-2">
+              <div class="h-1.5 w-12 bg-gray-300 rounded-full"></div>
+            </div>
+            <div class="py-8 px-6 space-y-6">
+              <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-[#c7eeff] mb-4">
+                <i class="fas fa-wifi text-[#8E24AA] text-2xl relative"></i>
+              </div>
+              <div class="text-center space-y-2">
+                <h3 class="text-2xl font-bold text-gray-900">Sem conexão com a internet</h3>
+                <p class="text-gray-600 text-sm leading-5">Parece que você está offline. Verifique sua conexão e tente novamente.</p>
+              </div>
+              <div id="connectingStatus" class="mt-4 hidden">
+                <div class="flex items-center justify-center gap-3 text-[#8E24AA]">
+                  <div class="w-3 h-3 rounded-full bg-[#8E24AA] connecting-animation"></div>
+                  <span>Conectando...</span>
+                </div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <button id="confirm-atendimento" class="w-full py-3 text-white bg-[#8E24AA] rounded-full font-semibold hover:bg-[#0c8dc7] transition-colors">
+                  <span class="flex items-center justify-center gap-2">
+                    <p id="textBtn">Verificar</p>
+                    <div id="spinner" class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin hidden"></div>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.classList.add("no-scroll");
+        modalContainer.classList.remove("hidden");
+
+        document.getElementById("confirm-atendimento").addEventListener("click", async () => {
+          const button = document.getElementById("confirm-atendimento");
+          const spinner = document.getElementById("spinner");
+          const textBtn = document.getElementById("textBtn");
+          const connectingStatus = document.getElementById('connectingStatus');
+
+          button.disabled = true;
+          spinner.classList.remove("hidden");
+          textBtn.innerText = 'Verificando conexão';
+          connectingStatus?.classList.remove('hidden');
+
+          setTimeout(async () => {
+            const ok = await checkConnection();
+            if (ok) closeContainerConfirmation();
+            connectingStatus?.classList.add('hidden');
+            button.disabled = false;
+            spinner.classList.add("hidden");
+            textBtn.innerText = 'Verificar';
+          }, 2000);
+        });
+      }
+
+      function hideOfflineModal() { closeContainerConfirmation(); }
+      window.addEventListener('online', hideOfflineModal);
+      window.addEventListener('offline', showOfflineModal);
+
+      function markActiveBottomNav() {
+        const current = (location.hash || '#/home').replace('#', '');
+        document.querySelectorAll('.custom-nav-item').forEach(a => {
+          const route = (a.getAttribute('data-route') || '/home').replace(/^#?\/?/, '/');
+          const currentClean = current.startsWith('/') ? current : '/' + current;
+          const isHome = (!current || current === '/' || current === '/home') && route === '/home';
+          a.classList.toggle('active', isHome || route === currentClean);
+        });
+      }
+      window.addEventListener('hashchange', markActiveBottomNav);
+      markActiveBottomNav();
+      window.markActiveBottomNav = markActiveBottomNav;
+
+      
+
+      
+
+      
+    });
+
+  </script>
+
+
+<script>
+  setTimeout(() => {
+    const hash = window.location.hash;
+    if (hash === '#/splash' || !hash) {
+      console.log('[FALLBACK] Redirecionamento de fallback ativado');
+      window.router?.navigate('/login');
+    }
+  }, 5000);
+</script>
+
+
+
+</body>
+
+</html>

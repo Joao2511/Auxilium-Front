@@ -1,0 +1,36 @@
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+body {
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+}
+
+body {
+  transition: background-color 0.3s ease;
+}
+
+.mobile-container {
+  transition: background-color 0.3s ease;
+}
+
+.custom-nav-item[style*="display: none"] {
+  display: none !important;
+}
+
+#confirm-atendimento-modal {
+  z-index: 10000;
+}
+.status-dados-faltantes {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.modal-open {
+  overflow: hidden;
+}

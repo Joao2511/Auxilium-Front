@@ -1,0 +1,105 @@
+<section class="p-4">
+  <div class="flex items-center justify-between mb-3">
+    <h1 class="text-xl font-bold" id="discTitulo">Tarefas</h1>
+    <button
+      id="btnNovaTarefa"
+      class="px-4 py-2 rounded-full bg-[#8E24AA] text-white"
+    >
+      Nova tarefa
+    </button>
+  </div>
+
+  <div class="modern-card p-3 mb-4">
+    <h3 class="font-semibold">Alunos matriculados</h3>
+    <div id="alunos" class="text-sm text-gray-600">Carregando…</div>
+  </div>
+
+  <div id="listaTarefas" class="space-y-3"></div>
+</section>
+
+<template id="tpl-tarefa">
+  <div class="modern-card p-4 flex items-center justify-between">
+    <div>
+      <div class="__titulo font-semibold"></div>
+      <div class="text-xs text-gray-500">
+        Entrega: <span class="__entrega"></span> • Pontos:
+        <span class="__pontos"></span>
+      </div>
+    </div>
+    <a
+      class="px-3 py-2 rounded-full bg-[#8E24AA] text-white"
+      data-navigo
+      data-open
+      >Ver entregas</a
+    >
+  </div>
+</template>
+
+<div
+  id="modalNovaTarefa"
+  class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+>
+  <div
+    class="bg-white dark:bg-dark-800 rounded-xl shadow-lg p-6 w-11/12 max-w-lg"
+  >
+    <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">
+      Nova Tarefa
+    </h2>
+
+    <label class="block mb-2 text-sm font-medium text-gray-700">Título</label>
+    <input
+      id="tarefaTitulo"
+      type="text"
+      class="w-full border rounded-lg px-3 py-2 mb-3 focus:ring-[#8E24AA]"
+      placeholder="Ex: Exercício de Lógica 2"
+    />
+
+    <label class="block mb-2 text-sm font-medium text-gray-700">Descrição</label>
+    <textarea
+      id="tarefaDescricao"
+      class="w-full border rounded-lg px-3 py-2 mb-3 focus:ring-[#8E24AA]"
+      placeholder="Explique o que o aluno deve fazer..."
+      rows="3"
+    ></textarea>
+
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <label class="block mb-2 text-sm font-medium text-gray-700"
+          >Data de entrega</label
+        >
+        <input
+          id="tarefaData"
+          type="datetime-local"
+          class="w-full border rounded-lg px-3 py-2 focus:ring-[#8E24AA]"
+        />
+      </div>
+
+      <div>
+        <label class="block mb-2 text-sm font-medium text-gray-700"
+          >Pontos</label
+        >
+        <input
+          id="tarefaPontos"
+          type="number"
+          class="w-full border rounded-lg px-3 py-2 focus:ring-[#8E24AA]"
+          value="100"
+        />
+      </div>
+    </div>
+
+    <div class="mt-5 flex justify-end gap-3">
+      <button
+        id="btnCancelarTarefa"
+        class="px-4 py-2 rounded-full border border-gray-400 text-gray-700"
+      >
+        Cancelar
+      </button>
+      <button
+        id="btnSalvarTarefa"
+        class="px-5 py-2 rounded-full bg-[#8E24AA] text-white"
+      >
+        Salvar
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,341 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auxilium - Home</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50">
+
+    <header
+        class="bg-gradient-to-r from-purple-600 via-purple-700 to-violet-600 text-white px-6 pt-12 pb-8 rounded-b-3xl">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-3">
+                <div
+                    class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="h-6 w-6 text-white">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-semibold">Olá, Ana!</h1>
+                    <p class="text-purple-100 text-sm opacity-90">Terça-feira, 9 de Setembro</p>
+                </div>
+            </div>
+            <button id="profile-button" class="text-white hover:bg-white/10 p-2 rounded-full active:bg-white/20">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="h-5 w-5">
+                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-purple-100 text-sm opacity-80">Pontos Totais</p>
+                        <p class="text-2xl font-bold text-white">1250</p>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="h-6 w-6 text-pink-300">
+                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                        <path d="M4 22h16" />
+                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-purple-100 text-sm opacity-80">Posição</p>
+                        <p class="text-2xl font-bold text-white">#3</p>
+                    </div>
+                    <span class="bg-pink-500 text-white border-0 px-3 py-1 text-xs font-bold rounded-full">TOP 5</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="px-6 mt-4 space-y-6 pb-28">
+        
+        <div class="p-6 rounded-3xl border-0 shadow-sm bg-white/80 backdrop-blur-sm border border-gray-100">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold text-gray-900">Hoje</h3>
+                <button id="see-all-tasks-button"
+                    class="text-purple-600 hover:bg-purple-50 rounded-full px-4 py-1.5 text-sm font-medium">Ver
+                    todas</button>
+            </div>
+            <div class="space-y-3">
+                <div
+                    class="task-item p-4 rounded-2xl cursor-pointer transition-all duration-200  shadow-lg bg-white/80 backdrop-blur-sm border border-gray-100  bg-white border border-gray-100 hover:border-purple-200 hover:shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <div class="w-2 h-2 rounded-full bg-red-400"></div>
+                                <p class="font-medium text-gray-900">Relatório de Química</p>
+                            </div>
+                            <div class="flex items-center space-x-3 text-sm text-gray-500">
+                                <span>Química</span><span>•</span><span>14:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="task-item p-4 rounded-2xl cursor-pointer transition-all duration-200 bg-emerald-50 border border-emerald-100">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <div class="w-2 h-2 rounded-full bg-yellow-400"></div>
+                                <p class="font-medium text-gray-900 line-through opacity-60">Exercícios Cap. 5</p>
+                            </div>
+                            <div class="flex items-center space-x-3 text-sm text-gray-500 opacity-60">
+                                <span>Matemática</span><span>•</span><span>16:00</span>
+                            </div>
+                        </div>
+                        <div class="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="white" stroke-width="3" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="task-item p-4 rounded-2xl cursor-pointer transition-all duration-200 bg-white border shadow-lg bg-white/80 backdrop-blur-sm border border-gray-100 border-gray-100 hover:border-purple-200 hover:shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <div class="w-2 h-2 rounded-full bg-red-400"></div>
+                                <p class="font-medium text-gray-900">Apresentação Final</p>
+                            </div>
+                            <div class="flex items-center space-x-3 text-sm text-gray-500">
+                                <span>História</span><span>•</span><span>19:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-6 rounded-3xl border-0 shadow-lg bg-white/80 backdrop-blur-sm border border-gray-100">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="h-5 w-5 text-purple-600">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                    </svg>
+                    <h3 class="text-lg font-semibold text-gray-900">Notas do Semestre</h3>
+                </div>
+                <button class="text-purple-600 hover:bg-purple-50 rounded-full px-4 py-1.5 text-sm font-medium">Ver
+                    detalhes</button>
+            </div>
+            <div class="space-y-1">
+                <div class="grid grid-cols-5 gap-2 pb-3 border-b border-gray-200">
+                    <div class="col-span-2 text-xs font-medium text-gray-500">Disciplina</div>
+                    <div class="text-xs font-medium text-gray-500 text-center">Faltas</div>
+                    <div class="text-xs font-medium text-gray-500 text-center">Menção</div>
+                    <div class="text-xs font-medium text-gray-500 text-center">Final</div>
+                </div>
+                <div class="grid grid-cols-5 gap-2 py-3 border-b border-gray-100 items-center">
+                    <div class="col-span-2 text-sm font-medium text-gray-900 truncate pr-2">Análise e Proj.</div>
+                    <div class="text-sm text-center text-gray-700">0</div>
+                    <div class="text-center"><span
+                            class="text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">SS</span>
+                    </div>
+                    <div class="text-center"><span
+                            class="text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">SS</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-5 gap-2 py-3 border-b border-gray-100 items-center">
+                    <div class="col-span-2 text-sm font-medium text-gray-900 truncate pr-2">Empreend.</div>
+                    <div class="text-sm text-center text-gray-700">0</div>
+                    <div class="text-center"><span
+                            class="text-xs font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">MM</span></div>
+                    <div class="text-center"><span
+                            class="text-xs font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">MS</span></div>
+                </div>
+                <div class="grid grid-cols-5 gap-2 py-3 border-b border-gray-100 items-center">
+                    <div class="col-span-2 text-sm font-medium text-gray-900 truncate pr-2">Est.Quali Eng.I</div>
+                    <div class="text-sm text-center text-gray-700">0</div>
+                    <div class="text-center"><span
+                            class="text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">SS</span>
+                    </div>
+                    <div class="text-center"><span
+                            class="text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">SS</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-5 gap-2 py-3 border-b border-gray-100 items-center">
+                    <div class="col-span-2 text-sm font-medium text-gray-900 truncate pr-2">Prog para Web</div>
+                    <div class="text-sm text-center text-gray-700">8</div>
+                    <div class="text-center"><span
+                            class="text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">SS</span>
+                    </div>
+                    <div class="text-center"><span class="text-xs text-gray-400">-</span></div>
+                </div>
+                <div class="grid grid-cols-5 gap-2 py-3 border-b-0 items-center">
+                    <div class="col-span-2 text-sm font-medium text-gray-900 truncate pr-2">Proj Int. II</div>
+                    <div class="text-sm text-center text-gray-700">2</div>
+                    <div class="text-center"><span
+                            class="text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">SS</span>
+                    </div>
+                    <div class="text-center"><span
+                            class="text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">SS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 pb-14">
+            <button id="new-task-button"
+                class="h-20 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white rounded-3xl shadow-lg flex flex-col items-center justify-center space-y-2 transition-all duration-200 active:scale-95">
+
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="h-6 w-6">
+                    <path d="M5 12h14" />
+                    <path d="M12 5v14" />
+                </svg>
+                <span class="font-medium">Nova Atividade</span>
+            </button>
+            <button id="chatbot-button"
+                class="h-20 border-2 border-purple-200 text-purple-600 hover:bg-purple-50 rounded-3xl flex flex-col items-center justify-center space-y-2 transition-all duration-200 bg-white/50 backdrop-blur-sm active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="h-6 w-6">
+                    <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
+                </svg>
+                <span class="font-medium">Assistente IA</span>
+            </button>
+        </div>
+    </main>
+
+    <button id="qr-fab"
+        class="fixed bottom-24 right-6 w-16 h-16 bg-purple-600 text-white rounded-2xl shadow-lg flex items-center justify-center active:scale-95 transition-transform z-30">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="5" height="5" x="3" y="3" rx="1" />
+            <rect width="5" height="5" x="16" y="3" rx="1" />
+            <rect width="5" height="5" x="3" y="16" rx="1" />
+            <path d="M21 16h-3a2 2 0 0 0-2 2v3" />
+            <path d="M16 8h1" />
+            <path d="M16 12h1" />
+            <path d="M12 16h-1" />
+            <path d="M12 12h1" />
+            <path d="M12 8h-1" />
+            <path d="M8 16h1" />
+            <path d="M8 12h-1" />
+        </svg>
+    </button>
+
+    <div id="qr-modal" class="fixed inset-0 z-50 hidden">
+        <div id="qr-backdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+        <div class="relative z-10 min-h-screen flex items-center justify-center p-4">
+            <div class="w-full max-w-sm bg-white rounded-3xl shadow-xl overflow-hidden">
+                <div class="px-6 pt-6 pb-4 flex items-center justify-between">
+                    <h3 class="text-base font-semibold text-gray-900">Meu QR Code</h3>
+                    <button id="qr-close" class="p-2 rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 6 6 18" />
+                            <path d="m6 6 12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="px-6 pb-6">
+                    <div
+                        class="w-full bg-white rounded-2xl border border-gray-200 p-4 flex items-center justify-center">
+                        <div id="qr-code" class="w-[320px] h-[320px] max-w-full max-h-[70vh]"></div>
+                    </div>
+                    <p id="qr-caption" class="mt-4 text-center text-xs text-gray-500 break-all"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/qrcode/build/qrcode.min.js"></script>
+
+    <script>
+        (function () {
+            const fab = document.getElementById('qr-fab');
+            const modal = document.getElementById('qr-modal');
+            const backdrop = document.getElementById('qr-backdrop');
+            const btnClose = document.getElementById('qr-close');
+            const qrHolder = document.getElementById('qr-code');
+            const caption = document.getElementById('qr-caption');
+
+            if (!fab || !modal || !backdrop || !btnClose || !qrHolder) return;
+            function makeToken() {
+                return String(Math.floor(100000 + Math.random() * 900000));
+            }
+
+            function openQR() {
+                const qrData = makeToken();
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+
+                qrHolder.innerHTML = '';
+                caption.textContent = '';
+
+                if (typeof QRCode === 'undefined') {
+                    qrHolder.innerHTML = '<div class="text-red-600 text-center p-4">⚠️ Biblioteca QRCode não carregou!</div>';
+                    caption.textContent = qrData;
+                    return;
+                }
+                const canvas = document.createElement('canvas');
+                QRCode.toCanvas(canvas, qrData, { width: 320 }, (err) => {
+                    if (err) console.error("Erro ao gerar QR:", err);
+                });
+
+                qrHolder.appendChild(canvas);
+                caption.textContent = qrData;
+            }
+
+            function closeQR() {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+
+            fab.addEventListener('click', openQR);
+            btnClose.addEventListener('click', closeQR);
+            backdrop.addEventListener('click', closeQR);
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeQR();
+            });
+        })();
+    </script>
+
+
+</body>
+
+</html>

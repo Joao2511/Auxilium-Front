@@ -1,0 +1,281 @@
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+  body {
+    font-family: "Inter", sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
+  }
+
+  .modern-card {
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: white;
+    border: 1px solid #e5e7eb;
+  }
+
+  .dark .modern-card {
+    background-color: rgb(31 41 55);
+    border: 1px solid #374151;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .modern-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .modern-card:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  }
+
+  .dark .nav-item.active::after {
+    background-color: #8E24AA;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+  }
+  .dark ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .dark ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .dark .icon-white,
+  .dark .icon-white * {
+    color: white !important;
+  }
+
+  .dark,
+  .dark h1,
+  .dark h2,
+  .dark h3,
+  .dark p,
+  .dark span,
+  .dark div {
+    color: white !important;
+  }
+
+  .dark .nav-item:not(.active) i {
+    color: #94a3b8 !important;
+  }
+
+  .dark .nav-item:not(.active) span {
+    color: #94a3b8 !important;
+  }
+
+  .icon-purple {
+    color: #8E24AA !important;
+  }
+  .icon-red {
+    color: #ef4444 !important;
+  }
+  .menu-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+  }
+  .menu-item:hover {
+    background-color: #f3e8f7;
+  }
+  .dark .menu-item {
+    background-color: rgb(31 41 55);
+    border-color: #374151;
+  }
+  .dark .menu-item:hover {
+    background-color: #4b2857;
+  }
+  .menu-item i {
+    margin-right: 1rem;
+    font-size: 1.25rem;
+    width: 1.5rem;
+    text-align: center;
+  }
+
+  .divider {
+    height: 1px;
+    background-color: #e5e7eb;
+    margin: 1rem 0;
+  }
+  .dark .divider {
+    background-color: #374151;
+  }
+
+  .profile-info {
+    margin-bottom: 0.5rem;
+  }
+  .profile-info-label {
+    font-weight: 500;
+    color: #64748b;
+  }
+  .dark .profile-info-label {
+    color: #94a3b8;
+  }
+  .profile-info-value {
+    color: #1e293b;
+  }
+  .dark .profile-info-value {
+    color: white;
+  }
+
+  .profile-name {
+    color: #1e293b;
+  }
+  .dark .profile-name {
+    color: white;
+  }
+
+  .profile-header .profile-text {
+    width: 100%;
+    text-align: left;
+  }
+  .profile-header .profile-text h2,
+  .profile-header .profile-text p {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    margin: 0;
+  }
+  #profile-name {
+    line-height: 1.3;
+    font-size: clamp(1rem, 3.2vw, 1.25rem);
+  }
+  .profile-details-grid .profile-info-label,
+  .profile-details-grid .profile-info-value {
+    text-align: left;
+  }
+
+  .skeleton {
+    animation: pulse 1.5s infinite ease-in-out;
+    background: linear-gradient(-90deg, #e0e0e0 0%, #f0f0f0 50%, #e0e0e0 100%);
+    background-size: 200% 100%;
+    border-radius: 4px;
+  }
+  .dark .skeleton {
+    background: linear-gradient(-90deg, #2a2a2a 0%, #3a3a3a 50%, #2a2a2a 100%);
+  }
+  @keyframes pulse {
+    0% {
+      background-position: -100% 0;
+    }
+    100% {
+      background-position: 100% 0;
+    }
+  }
+  .skeleton-text {
+    height: 1em;
+  }
+  .skeleton-circle {
+    border-radius: 50%;
+  }
+</style>
+
+<div id="skeleton-config" class="p-4">
+  <header class="mb-6">
+    <div class="skeleton skeleton-text w-32 h-6 mb-2"></div>
+    <div class="skeleton skeleton-text w-48 h-4"></div>
+  </header>
+
+  <section class="mb-6">
+    <div class="modern-card p-6">
+      <div class="flex items-center space-x-4 mb-4 profile-header">
+        <div class="skeleton skeleton-circle w-20 h-20"></div>
+        <div class="flex-1 space-y-2 profile-text">
+          <div class="skeleton skeleton-text w-48 h-6"></div>
+          <div class="skeleton skeleton-text w-40 h-4"></div>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 w-full profile-details-grid">
+        <div class="profile-info">
+          <div class="skeleton skeleton-text w-20 h-4 mb-1"></div>
+          <div class="skeleton skeleton-text w-full h-5"></div>
+        </div>
+        <div class="profile-info">
+          <div class="skeleton skeleton-text w-24 h-4 mb-1"></div>
+          <div class="skeleton skeleton-text w-full h-5"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mb-6">
+    <div class="modern-card p-4 space-y-3">
+      <div class="skeleton skeleton-text w-48 h-6 mb-2"></div>
+      <div class="flex items-center p-4 skeleton h-16 rounded-lg"></div>
+      <div class="divider m-0"></div>
+      <div class="flex items-center p-4 skeleton h-16 rounded-lg"></div>
+    </div>
+  </section>
+</div>
+
+<div id="config-content" class="p-4 hidden">
+  <header class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Configurações</h1>
+    <p class="text-gray-500 dark:text-gray-300">Gerencie seu perfil e preferências</p>
+  </header>
+
+  <section class="mb-6">
+    <div class="modern-card p-6">
+      <div class="flex items-center space-x-4 mb-6 profile-header">
+        <img id="profileImage" alt="Profile"
+          class="w-20 h-20 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-lg"
+          src="../assets/images/user-default.png"> <div class="profile-text">
+          <h2 id="profile-name" class="text-xl font-bold profile-name">Carregando...</h2>
+          <p id="info-email" class="text-gray-500 dark:text-gray-300 break-words">...</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full profile-details-grid">
+        <div class="profile-info">
+          <div class="profile-info-label">Nome Completo</div>
+          <div id="info-nome" class="profile-info-value break-words">—</div>
+        </div>
+        <div class="profile-info">
+          <div class="profile-info-label">Tipo de Conta</div>
+          <div id="info-tipo" class="profile-info-value break-words">—</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mb-6">
+    <div class="modern-card p-4">
+      <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4 p-2">Configurações da Conta</h2>
+
+      <a href="httpsas://wa.me/6130379199" target="_blank" class="menu-item" id="suporte-btn">
+        <i class="fas fa-question-circle text-gray-500"></i>
+        <div class="flex-1">
+          <h3 class="font-medium">Ajuda e Suporte</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Central de ajuda e contato</p>
+        </div>
+        <i class="fas fa-chevron-right text-gray-400"></i>
+      </a>
+
+      <div class="divider"></div>
+
+      <div class="menu-item" id="logout-menu-item">
+        <i class="fas fa-sign-out-alt text-red-500 icon-red"></i>
+        <div class="flex-1">
+          <h3 class="font-medium">Sair</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Encerrar sua sessão atual</p>
+        </div>
+        <i class="fas fa-chevron-right text-gray-400"></i>
+      </div>
+    </div>
+  </section>
+</div>
