@@ -9,18 +9,53 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              // Definindo o tom principal da marca (Rosa/Pink)
+              brand: {
+                500: "#E51B85", // Rosa de destaque
+                600: "#E83593", // Rosa mais claro para gradiente
+                900: "#3F0B4D", // Roxo escuro do fundo
+              },
+            },
+            fontFamily: { sans: ["Inter", "sans-serif"] },
+          },
+        },
+      };
+    </script>
+
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+      /* Fundo Roxo Escuro (estilo da tela de login) */
       body {
         font-family: "Inter", sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-color: #3f0b4d; 
         min-height: 100vh;
       }
+
+      /* Estilo dos Inputs e Select (usando classes customizadas) */
+      .input-style {
+        transition: all 0.3s ease;
+        background-color: #f8fafc; /* light gray */
+        border-color: #e5e7eb; /* gray-200 */
+      }
+      .input-style:focus {
+        border-color: #E51B85; /* Cor de foco da marca */
+        box-shadow: 0 0 0 2px rgba(229, 27, 133, 0.3); /* Ring suave rosa */
+        outline: none;
+      }
+      
+      /* Transição do campo de Justificativa */
       .justificativa-container {
         max-height: 0;
         opacity: 0;
         overflow: hidden;
-        transition: all 0.3s ease;
+        transition: all 0.3s ease-in-out; 
       }
       .justificativa-container.show {
         max-height: 200px;
@@ -31,11 +66,12 @@
   </head>
   <body class="flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+      
       <div class="flex justify-center mb-6">
         <img
-          src="../assets/images/logos/logo_preta.png"
+          src="./assets/images/logos/Logo.png"
           alt="Auxilium"
-          class="h-16"
+          class="h-12"
         />
       </div>
 
@@ -56,7 +92,7 @@
             id="cadastro-nome"
             required
             placeholder="Seu nome completo"
-            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            class="w-full px-4 py-2.5 border rounded-lg input-style"
           />
         </div>
 
@@ -69,7 +105,7 @@
             id="cadastro-email"
             required
             placeholder="aluno@uniceub.br"
-            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            class="w-full px-4 py-2.5 border rounded-lg input-style"
           />
         </div>
 
@@ -83,12 +119,12 @@
               id="cadastro-senha"
               required
               placeholder="Mínimo 6 caracteres"
-              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              class="w-full px-4 py-2.5 border rounded-lg input-style pr-10"
             />
             <button
               type="button"
               id="toggle-senha"
-              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
             >
               <i class="fas fa-eye"></i>
             </button>
@@ -101,7 +137,7 @@
           </label>
           <select
             id="cadastro-tipo"
-            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            class="w-full px-4 py-2.5 border rounded-lg input-style"
           >
             <option value="1">Aluno</option>
             <option value="2">Professor</option>
@@ -111,23 +147,23 @@
         <div id="justificativa-container" class="justificativa-container">
           <label class="block text-sm font-medium text-gray-700 mb-1">
             Por que você precisa de acesso como professor?
-            <span class="text-red-500">*</span>
-          </label>
+            <span class="text-brand-500 font-semibold">*</span> </label>
           <textarea
             id="cadastro-justificativa"
             rows="3"
             placeholder="Ex: Sou professor da disciplina de Algoritmos no 5º semestre..."
-            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+            class="w-full px-4 py-2.5 border rounded-lg input-style resize-none"
           ></textarea>
           <p class="text-xs text-gray-500 mt-1">
             <i class="fas fa-info-circle"></i>
             Sua conta será aprovada por um administrador
           </p>
         </div>
+        
         <button
           type="submit"
           id="btn-cadastrar"
-          class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity mt-6"
+          class="w-full h-14 flex justify-center items-center rounded-lg text-white font-medium shadow-sm transition-all active:scale-[.99] bg-gradient-to-b from-brand-600 to-brand-500 mt-6"
         >
           <i class="fas fa-user-plus mr-2"></i>
           Cadastrar
@@ -136,7 +172,7 @@
         <div class="text-center mt-4">
           <a
             href="pages/login.html"
-            class="text-sm text-purple-600 hover:text-purple-800"
+            class="text-sm text-brand-500 hover:text-brand-600 font-medium transition-colors"
           >
             Já tem uma conta? Faça login
           </a>
