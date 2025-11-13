@@ -15,11 +15,10 @@
         theme: {
           extend: {
             colors: {
-              // Definindo o tom principal da marca (Rosa/Pink)
               brand: {
-                500: "#E51B85", // Rosa de destaque
-                600: "#E83593", // Rosa mais claro para gradiente
-                900: "#3F0B4D", // Roxo escuro do fundo
+                500: "#E51B85",
+                600: "#E83593", 
+                900: "#3F0B4D",
               },
             },
             fontFamily: { sans: ["Inter", "sans-serif"] },
@@ -31,26 +30,23 @@
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
-      /* Fundo Roxo Escuro (estilo da tela de login) */
       body {
         font-family: "Inter", sans-serif;
         background-color: #3f0b4d; 
         min-height: 100vh;
       }
 
-      /* Estilo dos Inputs e Select (usando classes customizadas) */
       .input-style {
         transition: all 0.3s ease;
-        background-color: #f8fafc; /* light gray */
-        border-color: #e5e7eb; /* gray-200 */
+        background-color: #f8fafc;
+        border-color: #e5e7eb;
       }
       .input-style:focus {
-        border-color: #E51B85; /* Cor de foco da marca */
-        box-shadow: 0 0 0 2px rgba(229, 27, 133, 0.3); /* Ring suave rosa */
+        border-color: #E51B85;
+        box-shadow: 0 0 0 2px rgba(229, 27, 133, 0.3); 
         outline: none;
       }
       
-      /* Transição do campo de Justificativa */
       .justificativa-container {
         max-height: 0;
         opacity: 0;

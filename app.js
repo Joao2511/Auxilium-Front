@@ -67,13 +67,11 @@ export async function mountApp() {
   router
     .on({
       "/": async () => {
-        // Verifica se há sessão antes de ir para splash
         const {
           data: { session },
         } = await supabase.auth.getSession();
-        
+
         if (session) {
-          // Se já estiver logado, vai direto para home sem splash
           try {
             const profile = await getAuthProfile(session.user.id);
             if (profile) {
@@ -272,13 +270,11 @@ export async function mountApp() {
   });
 
   if (!window.location.hash) {
-    // Verifica se há sessão antes de ir para splash
     const {
       data: { session },
     } = await supabase.auth.getSession();
-    
+
     if (session) {
-      // Se já estiver logado, vai direto para home sem splash
       try {
         const profile = await getAuthProfile(session.user.id);
         if (profile) {
@@ -291,7 +287,6 @@ export async function mountApp() {
         router.navigate("/splash");
       }
     } else {
-      // Se não estiver logado, vai para splash
       router.navigate("/splash");
     }
   }

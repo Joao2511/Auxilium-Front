@@ -43,6 +43,21 @@
         transition: all 0.3s ease;
         min-height: 100vh;
         overflow: hidden;
+        position: relative;
+      }
+      
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("./assets/images/Star.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        z-index: 0;
       }
       .input-field {
         transition: all 0.3s ease;
@@ -229,7 +244,8 @@
 
   <body class="flex items-center justify-center p-4">
     <main
-      class="min-h-screen flex flex-col justify-center items-center px-4 py-6 max-w-md mx-auto bg-[#3F0B4D] w-full"
+      class="min-h-screen flex flex-col justify-center items-center px-4 py-6 max-w-md mx-auto w-full relative"
+      style="z-index: 1;"
     >
       <div class="flex justify-center mb-8">
         <img
@@ -524,7 +540,7 @@
 
       async function getVersionApp() {
         try {
-          const res = await fetch("https://sua-api.com/v1/versao-app");
+          // const res = await fetch("https://sua-api.com/v1/versao-app");
           const data = await res.json();
           const serverVersion = data.version;
           const localVersion =

@@ -5,12 +5,10 @@ export default {
   async index() {
     console.log("[CTRL] splash.index() CHAMADO");
 
-    // Verifica sessão ANTES de renderizar a splash
     const {
       data: { session },
     } = await supabase.auth.getSession();
 
-    // Se já estiver logado, redireciona direto sem mostrar splash
     if (session) {
       console.log("[SPLASH] Usuário já logado, redirecionando sem splash");
       let destino = "/home";
@@ -30,7 +28,6 @@ export default {
       return;
     }
 
-    // Se não estiver logado, mostra a splash e depois redireciona para login
     const splashView = await import("../views/splashView.js");
     await splashView.default.render("splash");
 
@@ -47,7 +44,6 @@ export default {
           return;
         }
 
-        // Se logou durante a splash, redireciona para home
         let destino = "/home";
         try {
           const { data: profile } = await supabase
