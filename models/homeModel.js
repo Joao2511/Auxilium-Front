@@ -34,11 +34,11 @@ export default function homeModel() {
       .eq("id_usuario", user.id)
       .single();
 
-    const nome = usuario?.nome_completo || "Usuário";
+    const nome = usuario?.nome_completo || "User";
     const primeiroNome = nome.split(" ")[0];
 
     if (elNome) {
-      elNome.textContent = `Olá, ${primeiroNome}!`;
+      elNome.textContent = `Hi ${primeiroNome},`;
     }
   }
   async function carregarResumoTarefas() {

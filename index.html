@@ -321,25 +321,24 @@
     }
 
     .custom-nav-item {
-      color: #262626 !important;
+      color: #9ca3af !important;
+      transition: color 0.2s ease;
     }
 
     .dark .custom-nav-item {
-      color: #e5e5e5 !important;
+      color: #9ca3af !important;
     }
 
     .custom-nav-item.active {
-      border-top-width: 3px;
-      border-top-color: #8E24AA;
-      color: #8E24AA !important;
-      transition: 0.3s ease-in;
+      color: #3b82f6 !important;
+    }
+
+    .custom-nav-item.active svg {
+      stroke: #3b82f6 !important;
     }
 
     .dark .custom-nav-item.active {
-      border-top-width: 3px;
-      border-top-color: #8E24AA;
-      color: #8E24AA !important;
-      transition: 0.3s ease-in;
+      color: #3b82f6 !important;
     }
 
     @media (max-width: 428px) {
@@ -972,65 +971,92 @@
       <main id="app" class="container mx-auto pb-[100px]"></main>
     </div>
 
-    <nav id="nav-aluno" class="bottom-nav custom-bottom-nav role-nav hidden">
-  <div class="custom-nav-container">
-    <div class="custom-nav-flex">
-      
-      <a href="/home" data-route="/home" data-navigo class="custom-nav-item group">
-        <i class="fas fa-home custom-icon"></i>
-        <span class="custom-label">Início</span>
-      </a>
+    <nav id="nav-aluno" class="bottom-nav custom-bottom-nav role-nav hidden" style="background-color: white; border-top: 1px solid #e5e7eb;">
+      <div class="flex items-center justify-around max-w-md mx-auto py-3">
+        <a href="/home" data-route="/home" data-navigo class="custom-nav-item flex flex-col items-center space-y-1 text-gray-400 hover:text-gray-600">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="7" height="7" x="3" y="3" rx="1"/>
+            <rect width="7" height="7" x="14" y="3" rx="1"/>
+            <rect width="7" height="7" x="14" y="14" rx="1"/>
+            <rect width="7" height="7" x="3" y="14" rx="1"/>
+          </svg>
+          <span class="text-xs font-semibold">Home</span>
+        </a>
+        <a href="/disciplinas" data-route="/disciplinas" data-navigo class="custom-nav-item flex flex-col items-center space-y-1 text-gray-400 hover:text-gray-600">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+          <span class="text-xs font-semibold">Disciplinas</span>
+        </a>
+        <a href="/agenda" data-route="/agenda" data-navigo class="custom-nav-item flex flex-col items-center space-y-1 text-gray-400 hover:text-gray-600">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <span class="text-xs font-semibold">Agenda</span>
+        </a>
+        <a href="/ranking" data-route="/ranking" data-navigo class="custom-nav-item flex flex-col items-center space-y-1 text-gray-400 hover:text-gray-600">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+            <path d="M4 22h16"/>
+            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+          </svg>
+          <span class="text-xs font-semibold">Ranking</span>
+        </a>
+        <a href="/chats" data-route="/chats" data-navigo class="custom-nav-item flex flex-col items-center space-y-1 text-gray-400 hover:text-gray-600">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span class="text-xs font-semibold">Chats</span>
+        </a>
+      </div>
+    </nav>
 
-      <a href="/agenda" data-route="/agenda" data-navigo class="custom-nav-item group">
-        <i class="fas fa-calendar custom-icon"></i>
-        <span class="custom-label">Agenda</span>
-      </a>
-
-      <a href="/chats" data-route="/chats" data-navigo class="custom-nav-item group">
-        <i class="fas fa-book nav-icon custom-icon"></i>
-        <span class="custom-label">Chats</span>
-      </a>
-
-      <a href="/ranking" data-route="/ranking" data-navigo class="custom-nav-item group">
-        <i class="fas fa-trophy custom-icon"></i>
-        <span class="custom-label">Ranking</span>
-      </a>
-
-      <a href="/config" data-route="/config" data-navigo class="custom-nav-item group">
-        <i class="fa-solid fa-gear custom-icon"></i>
-        <span class="custom-label">Config</span>
-      </a>
-
-       <a href="/disciplinas" data-route="/disciplinas" data-navigo class="custom-nav-item group">
-        <i class="fas fa-book-open custom-icon"></i>
-        <span class="custom-label">Disciplinas</span>
-      </a>
-
-    </div>
-  </div>
-</nav>
-
-<nav id="nav-professor" class="bottom-nav custom-bottom-nav role-nav hidden">
-  <div class="custom-nav-container">
-    <div class="custom-nav-flex">
-      
-      <a href="/profhome" data-route="/profhome" data-navigo class="custom-nav-item group">
-        <i class="fas fa-chalkboard-teacher custom-icon"></i>
-        <span class="custom-label">Início</span>
-      </a>
-      
-      <a href="/profdisciplinas" data-route="/profdisciplinas" data-navigo class="custom-nav-item group">
-        <i class="fas fa-book custom-icon"></i>
-        <span class="custom-label">Disciplinas</span>
-      </a>
-      
-      <a href="/config" data-route="/config" data-navigo class="custom-nav-item group">
-        <i class="fa-solid fa-gear custom-icon"></i>
-        <span class="custom-label">Config</span>
-      </a>
-    </div>
-  </div>
-</nav>
+<nav id="nav-professor" class="bottom-nav custom-bottom-nav role-nav hidden" style="background-color: white; border-top: 1px solid #e5e7eb;">
+      <div class="flex items-center justify-around max-w-md mx-auto py-3">
+        <a href="/profhome" data-route="/profhome" data-navigo class="custom-nav-item flex flex-col items-center space-y-1 text-gray-400 hover:text-gray-600">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="7" height="7" x="3" y="3" rx="1"/>
+            <rect width="7" height="7" x="14" y="3" rx="1"/>
+            <rect width="7" height="7" x="14" y="14" rx="1"/>
+            <rect width="7" height="7" x="3" y="14" rx="1"/>
+          </svg>
+          <span class="text-xs font-semibold">Home</span>
+        </a>
+        <a href="/profdisciplinas" data-route="/profdisciplinas" data-navigo class="custom-nav-item flex flex-col items-center space-y-1 text-gray-400 hover:text-gray-600">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+          <span class="text-xs font-semibold">Disciplinas</span>
+        </a>
+        <a href="/agenda" data-route="/agenda" data-navigo class="custom-nav-item flex flex-col items-center space-y-1 text-gray-400 hover:text-gray-600">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <span class="text-xs font-semibold">Agenda</span>
+        </a>
+        <a href="/config" data-route="/config" data-navigo class="custom-nav-item flex flex-col items-center space-y-1 text-gray-400 hover:text-gray-600">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v6m0 6v6"/>
+            <path d="m4.93 4.93 4.24 4.24m5.66 5.66 4.24 4.24"/>
+            <path d="M1 12h6m6 0h6"/>
+            <path d="m4.93 19.07 4.24-4.24m5.66-5.66 4.24-4.24"/>
+          </svg>
+          <span class="text-xs font-semibold">Config</span>
+        </a>
+      </div>
+    </nav>
 
 
     <div id="toastContainer" class="fixed bottom-16 left-0 right-0 flex flex-col items-center z-[20000] px-4"></div>
