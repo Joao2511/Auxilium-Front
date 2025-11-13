@@ -38,7 +38,7 @@ export default function homeModel() {
     const primeiroNome = nome.split(" ")[0];
 
     if (elNome) {
-      elNome.textContent = `Hi ${primeiroNome},`;
+      elNome.textContent = `Olá, ${primeiroNome}!`;
     }
   }
   async function carregarResumoTarefas() {
