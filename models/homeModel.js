@@ -27,8 +27,6 @@ export default function homeModel() {
 
     const user = session.user;
     const elNome = document.getElementById("userName");
-    const elEmail = document.getElementById("userEmail");
-    const elAvatar = document.getElementById("userAvatar");
 
     const { data: usuario } = await supabase
       .from("usuario")
@@ -37,18 +35,11 @@ export default function homeModel() {
       .single();
 
     const nome = usuario?.nome_completo || "Usuário";
-    const email = usuario?.email_institucional || user.email;
+    const primeiroNome = nome.split(" ")[0];
 
-    elNome.textContent = nome;
-    elEmail.textContent = email;
-
-    const iniciais = nome
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase();
-    elAvatar.textContent = iniciais;
+    if (elNome) {
+      elNome.textContent = `Olá, ${primeiroNome}!`;
+    }
   }
   async function carregarResumoTarefas() {
     const lista = document.getElementById("tarefasPendentes");
