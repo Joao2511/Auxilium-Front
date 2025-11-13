@@ -74,7 +74,10 @@ export default function agendaModel() {
     const {
       data: { session },
     } = await supabase.auth.getSession();
-    if (!session) return router.navigate("/login");
+    if (!session) {
+      window.location.href = "/login.html";
+      return;
+    }
     const data = [
       { titulo: "Entrega do trabalho de IA", hora: "10:00" },
       { titulo: "Reunião com grupo de projeto", hora: "18:30" },

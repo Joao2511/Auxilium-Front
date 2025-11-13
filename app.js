@@ -66,9 +66,33 @@ export async function mountApp() {
 
   router
     .on({
-      "/": () => router.navigate("/splash"),
+      "/": async () => {
+        // Verifica se há sessão antes de ir para splash
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        
+        if (session) {
+          // Se já estiver logado, vai direto para home sem splash
+          try {
+            const profile = await getAuthProfile(session.user.id);
+            if (profile) {
+              const homeRoute = profile.id_tipo === 2 ? "/profhome" : "/home";
+              router.navigate(homeRoute);
+            } else {
+              router.navigate("/splash");
+            }
+          } catch (e) {
+            router.navigate("/splash");
+          }
+        } else {
+          router.navigate("/splash");
+        }
+      },
       "/splash": () => splashController.index(),
-      "/login": () => loginController.index(),
+      "/login": () => {
+        window.location.href = "/login.html";
+      },
 
       "/home": () => homeController.index(),
       "/agenda": () => agendaController.index(),
@@ -131,12 +155,12 @@ export async function mountApp() {
             "[GUARD] Deslogado. Tentando acessar rota privada. Bloqueado."
           );
           done(false);
-          router.navigate("/login");
+          window.location.href = "/login.html";
         } else {
           const profile = await getAuthProfile(session.user.id);
           if (!profile) {
             done(false);
-            router.navigate("/login");
+            window.location.href = "/login.html";
             return;
           }
 
@@ -248,7 +272,28 @@ export async function mountApp() {
   });
 
   if (!window.location.hash) {
-    router.navigate("/splash");
+    // Verifica se há sessão antes de ir para splash
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    
+    if (session) {
+      // Se já estiver logado, vai direto para home sem splash
+      try {
+        const profile = await getAuthProfile(session.user.id);
+        if (profile) {
+          const homeRoute = profile.id_tipo === 2 ? "/profhome" : "/home";
+          router.navigate(homeRoute);
+        } else {
+          router.navigate("/splash");
+        }
+      } catch (e) {
+        router.navigate("/splash");
+      }
+    } else {
+      // Se não estiver logado, vai para splash
+      router.navigate("/splash");
+    }
   }
   router.resolve();
 }

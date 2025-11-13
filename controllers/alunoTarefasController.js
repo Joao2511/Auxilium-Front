@@ -16,7 +16,10 @@ export default {
     const {
       data: { session },
     } = await supabase.auth.getSession();
-    if (!session) return router.navigate("/login");
+    if (!session) {
+      window.location.href = "/login.html";
+      return;
+    }
 
     const { data: tarefas, error } = await supabase
       .from("tarefa")

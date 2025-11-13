@@ -87,17 +87,13 @@ async function handleLogout() {
     localStorage.removeItem("authToken");
     sessionStorage.removeItem("authToken");
 
-    if (window.router) {
-      window.router.navigate("/login");
-    } else {
-      window.location.href = "pages/login.html";
-    }
-
     document.getElementById("nav-aluno")?.classList.add("hidden");
     document.getElementById("nav-professor")?.classList.add("hidden");
+
+    window.location.href = "/login.html";
   } catch (err) {
     console.error("Erro no logout:", err);
-    window.location.href = "pages/login.html";
+    window.location.href = "/login.html";
   }
 }
 

@@ -24,7 +24,10 @@ export default {
     const {
       data: { session },
     } = await supabase.auth.getSession();
-    if (!session) return router.navigate("/login");
+    if (!session) {
+      window.location.href = "/login.html";
+      return;
+    }
 
     const id_aluno = session.user.id;
 

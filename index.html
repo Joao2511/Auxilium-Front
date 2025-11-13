@@ -1238,7 +1238,7 @@
     const hash = window.location.hash;
     if (hash === '#/splash' || !hash) {
       console.log('[FALLBACK] Redirecionamento de fallback ativado');
-      window.router?.navigate('/login');
+      window.location.href = '/login.html';
     }
   }, 5000);
 </script>

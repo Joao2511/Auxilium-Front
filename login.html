@@ -41,6 +41,8 @@
         background-color: #3F0B4D;
         color: #1e293b;
         transition: all 0.3s ease;
+        min-height: 100vh;
+        overflow: hidden;
       }
       .input-field {
         transition: all 0.3s ease;
@@ -225,16 +227,15 @@
     </style>
   </head>
 
-  <body class="min-h-screen">
-
+  <body class="flex items-center justify-center p-4">
     <main
-      class="min-h-screen flex flex-col justify-center items-center px-4 py-6 max-w-md mx-auto bg-[#3F0B4D]"
+      class="min-h-screen flex flex-col justify-center items-center px-4 py-6 max-w-md mx-auto bg-[#3F0B4D] w-full"
     >
       <div class="flex justify-center mb-8">
         <img
           id="logo-clara"
           class="logo"
-          src="../assets/images/logos/Logo.png"
+          src="./assets/images/logos/Logo.png"
           alt="Logo Auxilium"
         />
       </div>
@@ -346,7 +347,7 @@
 
       <div class="flex justify-center mb-8">
         <img
-          src="../assets/images/logos/logo_preta.png"
+          src="./assets/images/logos/logo_preta.png"
           alt="Auxilium"
           class="logo"
         />
@@ -398,8 +399,8 @@
     </div>
 
     <script type="module">
-      import Utils from "../utils.js";
-      import * as loginModel from "../models/loginModel.js";
+      import Utils from "./utils.js";
+      import * as loginModel from "./models/loginModel.js";
       (function fixToasts() {
         if (!window.Utils || typeof Utils.showMessageToast !== "function")
           return;
@@ -523,7 +524,7 @@
 
       async function getVersionApp() {
         try {
-          // const res = await fetch("https://sua-api.com/v1/versao-app");
+          const res = await fetch("https://sua-api.com/v1/versao-app");
           const data = await res.json();
           const serverVersion = data.version;
           const localVersion =
@@ -710,7 +711,9 @@
             Utils.showMessageToast("success", "Login realizado!", `Olá! Redirecionando...`, { duration: 2000 });
 
              setTimeout(() => {
-              window.location.href = "/";
+              // Redireciona direto para a home correta baseado no tipo de usuário
+              const homeRoute = usuario.id_tipo === 2 ? "/profhome" : "/home";
+              window.location.href = `/#${homeRoute}`;
             }, 1500);
           } catch (err) {
             clearAuth();
@@ -744,3 +747,4 @@
     ></div>
   </body>
 </html>
+

@@ -187,7 +187,7 @@ function attachEventListeners() {
             }, 200);
           }
         } else {
-          window.router.navigate("/login");
+          window.location.href = "/login.html";
           document.body.classList.remove("tabs-disabled");
           setTimeout(() => {
             if (window.markActiveBottomNav) window.markActiveBottomNav();
