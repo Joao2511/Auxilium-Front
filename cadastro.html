@@ -32,19 +32,45 @@
 
       body {
         font-family: "Inter", sans-serif;
-        background-color: #3f0b4d; 
+        background-color: #3F0B4D;
+        color: #1e293b;
+        transition: all 0.3s ease;
         min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+      }
+      
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("./assets/images/Star.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        z-index: 0;
       }
 
       .input-style {
         transition: all 0.3s ease;
         background-color: #f8fafc;
         border-color: #e5e7eb;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
       }
       .input-style:focus {
-        border-color: #E51B85;
-        box-shadow: 0 0 0 2px rgba(229, 27, 133, 0.3); 
         outline: none;
+      }
+      
+      .input-icon {
+        color: #E83291;
+      }
+
+      .logo {
+        height: 35px;
+        transition: all 0.3s ease;
       }
       
       .justificativa-container {
@@ -54,103 +80,266 @@
         transition: all 0.3s ease-in-out; 
       }
       .justificativa-container.show {
-        max-height: 200px;
+        max-height: 300px;
         opacity: 1;
         margin-top: 1rem;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.3s ease-out forwards;
+      }
+
+      .account-type-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #3F0B4D;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+
+      .account-type-modal.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .modal-content-wrapper {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 400px;
+        transform: scale(0.7);
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .account-type-modal.active .modal-content-wrapper {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      .account-type-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 3px solid transparent;
+      }
+
+      .account-type-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(229, 27, 133, 0.3);
+        border-color: #E51B85;
+      }
+
+      .account-type-card.selected {
+        border-color: #E51B85;
+      }
+
+      .account-type-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #E83593, #E51B85);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        font-size: 28px;
+        color: white;
+      }
+
+      .close-modal-btn {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        z-index: 10;
+      }
+
+      .close-modal-btn:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+      }
+
+      .selected-type-display {
+        background-color: #f8fafc;
+        border: 2px solid #e5e7eb;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .selected-type-display:hover {
+        border-color: #E51B85;
+      }
+
+      .selected-type-display.has-selection {
+        border-color: #E51B85;
       }
     </style>
   </head>
   <body class="flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
-      
-      <div class="flex justify-center mb-6">
+    <main
+      class="min-h-screen flex flex-col justify-center items-center px-4 py-6 max-w-md mx-auto w-full relative"
+      style="z-index: 1;"
+    >
+      <div class="flex justify-center mb-8">
         <img
+          class="logo"
           src="./assets/images/logos/Logo.png"
-          alt="Auxilium"
-          class="h-12"
+          alt="Logo Auxilium"
         />
       </div>
 
-      <h1 class="text-2xl font-bold text-center text-gray-800 mb-2">
-        Criar Conta
-      </h1>
-      <p class="text-center text-gray-600 mb-6 text-sm">
-        Preencha os dados para começar
-      </p>
-
-      <form id="cadastro-form" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            Nome Completo
-          </label>
-          <input
-            type="text"
-            id="cadastro-nome"
-            required
-            placeholder="Seu nome completo"
-            class="w-full px-4 py-2.5 border rounded-lg input-style"
-          />
+      <div class="w-full max-w-sm animate-fade-in">
+        <div class="flex flex-col items-center">
+          <h1 class="text-3xl text-center text-white leading-5 font-bold">
+            Crie sua conta
+          </h1>
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            Email Institucional
-          </label>
-          <input
-            type="email"
-            id="cadastro-email"
-            required
-            placeholder="aluno@uniceub.br"
-            class="w-full px-4 py-2.5 border rounded-lg input-style"
-          />
+        <div class="text-center pt-2 mb-8 mt-2">
+          <a
+            href="login.html"
+            class="text-sm text-white font-semibold"
+          >
+            Já tem uma conta? <span class="text-[#E51A85]">Faça login</span>
+          </a>
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            Senha
-          </label>
+      <form id="cadastro-form" autocomplete="off" novalidate>
+        <div class="mb-4">
+          <label for="cadastro-nome" class="sr-only">Nome Completo</label>
           <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-user input-icon"></i>
+            </span>
+            <input
+              type="text"
+              id="cadastro-nome"
+              name="cadastro-nome"
+              autocomplete="off"
+              autocapitalize="words"
+              autocorrect="off"
+              spellcheck="false"
+              required
+              placeholder="Nome completo"
+              class="input-style h-12 pl-10 w-full px-4 rounded-lg border focus:outline-none font-bold"
+            />
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="cadastro-email" class="sr-only">Email Institucional</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-envelope input-icon"></i>
+            </span>
+            <input
+              type="email"
+              id="cadastro-email"
+              name="cadastro-email"
+              autocomplete="off"
+              autocapitalize="none"
+              autocorrect="off"
+              spellcheck="false"
+              required
+              placeholder="seu@email.com"
+              class="input-style h-12 pl-10 w-full px-4 rounded-lg border focus:outline-none font-bold"
+            />
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="cadastro-senha" class="sr-only">Senha</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-lock input-icon"></i>
+            </span>
             <input
               type="password"
               id="cadastro-senha"
+              name="cadastro-senha"
+              autocomplete="off"
               required
-              placeholder="Mínimo 6 caracteres"
-              class="w-full px-4 py-2.5 border rounded-lg input-style pr-10"
+              placeholder="••••••••"
+              class="input-style h-12 pl-10 w-full px-4 rounded-lg border focus:outline-none font-bold pr-10"
             />
             <button
               type="button"
               id="toggle-senha"
-              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-500"
             >
               <i class="fas fa-eye"></i>
             </button>
           </div>
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            Eu sou:
-          </label>
-          <select
-            id="cadastro-tipo"
-            class="w-full px-4 py-2.5 border rounded-lg input-style"
+        <div class="mb-4">
+          <label for="cadastro-tipo" class="sr-only">Eu sou</label>
+          <div 
+            id="account-type-trigger"
+            class="selected-type-display h-12 pl-10 w-full px-4 rounded-lg flex items-center justify-between font-bold"
           >
-            <option value="1">Aluno</option>
-            <option value="2">Professor</option>
-          </select>
+            <div class="flex items-center">
+              <span class="absolute left-3">
+                <i id="selected-icon" class="fas fa-user-circle input-icon"></i>
+              </span>
+              <span id="selected-text" class="text-gray-400">Selecione o tipo de conta</span>
+            </div>
+            <i class="fas fa-chevron-down text-gray-400"></i>
+          </div>
+          <input type="hidden" id="cadastro-tipo" name="cadastro-tipo" value="" />
         </div>
 
         <div id="justificativa-container" class="justificativa-container">
-          <label class="block text-sm font-medium text-gray-700 mb-1">
+          <label for="cadastro-justificativa" class="block text-sm font-medium text-white mb-2">
             Por que você precisa de acesso como professor?
-            <span class="text-brand-500 font-semibold">*</span> </label>
-          <textarea
-            id="cadastro-justificativa"
-            rows="3"
-            placeholder="Ex: Sou professor da disciplina de Algoritmos no 5º semestre..."
-            class="w-full px-4 py-2.5 border rounded-lg input-style resize-none"
-          ></textarea>
-          <p class="text-xs text-gray-500 mt-1">
+            <span class="text-[#E51A85] font-semibold">*</span>
+          </label>
+          <div class="relative">
+            <span class="absolute top-3 left-3 pointer-events-none">
+              <i class="fas fa-comment-dots input-icon"></i>
+            </span>
+            <textarea
+              id="cadastro-justificativa"
+              name="cadastro-justificativa"
+              rows="3"
+              placeholder="Ex: Sou professor da disciplina de Algoritmos no 5º semestre..."
+              class="input-style w-full pl-10 pr-4 py-2.5 border rounded-lg focus:outline-none font-bold resize-none"
+            ></textarea>
+          </div>
+          <p class="text-xs text-white mt-2 opacity-90">
             <i class="fas fa-info-circle"></i>
             Sua conta será aprovada por um administrador
           </p>
@@ -159,21 +348,59 @@
         <button
           type="submit"
           id="btn-cadastrar"
-          class="w-full h-14 flex justify-center items-center rounded-lg text-white font-medium shadow-sm transition-all active:scale-[.99] bg-gradient-to-b from-brand-600 to-brand-500 mt-6"
+          class="w-full h-14 flex justify-center items-center rounded-lg text-white font-medium shadow-sm transition-all active:scale-[.99] bg-gradient-to-b from-[#E83593] to-[#E51B85] mt-6"
         >
-          <i class="fas fa-user-plus mr-2"></i>
+          <i class="fas fa-user-plus mr-2 text-[14px]"></i>
           Cadastrar
         </button>
-
-        <div class="text-center mt-4">
-          <a
-            href="login.html"
-            class="text-sm text-brand-500 hover:text-brand-600 font-medium transition-colors"
-          >
-            Já tem uma conta? Faça login
-          </a>
-        </div>
       </form>
+      </div>
+    </main>
+
+    <!-- Account Type Selection Modal -->
+    <div class="account-type-modal" id="accountTypeModal">
+      <button class="close-modal-btn" id="closeModalBtn">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <div class="modal-content-wrapper">
+        <div class="text-center mb-8">
+          <h2 class="text-3xl font-bold text-white mb-2">Escolha o tipo de conta</h2>
+          <p class="text-white opacity-90 text-sm">Selecione a opção que melhor descreve você</p>
+        </div>
+
+        <div class="account-type-card" data-type="1">
+          <div class="flex items-start gap-4">
+            <div class="account-type-icon">
+              <i class="fas fa-user-graduate"></i>
+            </div>
+            <div class="flex-1">
+              <h3 class="text-xl font-bold text-gray-800 mb-1">Aluno</h3>
+              <p class="text-gray-600 text-sm">
+                Acesse tarefas, entregas, agenda e acompanhe seu desempenho acadêmico.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="account-type-card" data-type="2">
+          <div class="flex items-start gap-4">
+            <div class="account-type-icon">
+              <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+            <div class="flex-1">
+              <h3 class="text-xl font-bold text-gray-800 mb-1">Professor</h3>
+              <p class="text-gray-600 text-sm">
+                Gerencie disciplinas, crie tarefas e acompanhe o progresso dos alunos.
+              </p>
+              <div class="mt-2 flex items-center text-xs text-orange-600">
+                <i class="fas fa-exclamation-circle mr-1"></i>
+                Requer aprovação
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script type="module">
@@ -191,7 +418,14 @@
         }
       });
 
-      const tipoSelect = document.getElementById("cadastro-tipo");
+      // Account Type Modal Logic
+      const accountTypeModal = document.getElementById("accountTypeModal");
+      const accountTypeTrigger = document.getElementById("account-type-trigger");
+      const closeModalBtn = document.getElementById("closeModalBtn");
+      const accountTypeCards = document.querySelectorAll(".account-type-card");
+      const tipoInput = document.getElementById("cadastro-tipo");
+      const selectedText = document.getElementById("selected-text");
+      const selectedIcon = document.getElementById("selected-icon");
       const justificativaContainer = document.getElementById(
         "justificativa-container"
       );
@@ -199,14 +433,63 @@
         "cadastro-justificativa"
       );
 
-      tipoSelect.addEventListener("change", () => {
-        if (tipoSelect.value === "2") {
-          justificativaContainer.classList.add("show");
-          justificativaInput.required = true;
-        } else {
-          justificativaContainer.classList.remove("show");
-          justificativaInput.required = false;
+      // Open modal
+      accountTypeTrigger.addEventListener("click", () => {
+        accountTypeModal.classList.add("active");
+        document.body.style.overflow = "hidden";
+      });
+
+      // Close modal
+      const closeModal = () => {
+        accountTypeModal.classList.remove("active");
+        document.body.style.overflow = "";
+      };
+
+      closeModalBtn.addEventListener("click", closeModal);
+
+      // Close on background click
+      accountTypeModal.addEventListener("click", (e) => {
+        if (e.target === accountTypeModal) {
+          closeModal();
         }
+      });
+
+      // Select account type
+      accountTypeCards.forEach(card => {
+        card.addEventListener("click", () => {
+          const type = card.getAttribute("data-type");
+          
+          // Remove previous selection
+          accountTypeCards.forEach(c => c.classList.remove("selected"));
+          card.classList.add("selected");
+
+          // Update hidden input
+          tipoInput.value = type;
+
+          // Update display
+          accountTypeTrigger.classList.add("has-selection");
+          
+          if (type === "1") {
+            selectedText.textContent = "Aluno";
+            selectedText.classList.remove("text-gray-400");
+            selectedText.classList.add("text-gray-800");
+            selectedIcon.className = "fas fa-user-graduate input-icon";
+            justificativaContainer.classList.remove("show");
+            justificativaInput.required = false;
+          } else if (type === "2") {
+            selectedText.textContent = "Professor";
+            selectedText.classList.remove("text-gray-400");
+            selectedText.classList.add("text-gray-800");
+            selectedIcon.className = "fas fa-chalkboard-teacher input-icon";
+            justificativaContainer.classList.add("show");
+            justificativaInput.required = true;
+          }
+
+          // Close modal after selection
+          setTimeout(() => {
+            closeModal();
+          }, 300);
+        });
       });
 
       document
@@ -219,11 +502,16 @@
             .getElementById("cadastro-email")
             .value.trim();
           const senha = document.getElementById("cadastro-senha").value;
-          const idTipo = parseInt(tipoSelect.value);
+          const idTipo = parseInt(tipoInput.value);
           const justificativa = justificativaInput.value.trim();
 
           if (!nome || !email || !senha) {
             alert("Preencha todos os campos!");
+            return;
+          }
+
+          if (!idTipo) {
+            alert("Selecione o tipo de conta!");
             return;
           }
 

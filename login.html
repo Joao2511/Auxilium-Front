@@ -115,7 +115,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: white;
+        background-color: #3F0B4D;
         z-index: 1000;
         display: flex;
         flex-direction: column;
@@ -129,6 +129,15 @@
       .recovery-screen.active {
         opacity: 1;
         pointer-events: all;
+      }
+      .recovery-screen .recovery-content {
+        transform: scale(0.7);
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .recovery-screen.active .recovery-content {
+        transform: scale(1);
+        opacity: 1;
       }
 
       .logo {
@@ -145,13 +154,14 @@
         align-items: center;
         justify-content: center;
         border-radius: 50%;
-        background-color: rgba(0, 0, 0, 0.1);
-        color: #64748b;
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
         cursor: pointer;
         transition: all 0.2s ease;
       }
       .close-btn:hover {
-        background-color: rgba(0, 0, 0, 0.2);
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
       }
 
       @keyframes slideUp {
@@ -361,56 +371,64 @@
         <i class="fas fa-times"></i>
       </button>
 
-      <div class="flex justify-center mb-8">
-        <img
-          src="./assets/images/logos/logo_preta.png"
-          alt="Auxilium"
-          class="logo"
-        />
-      </div>
+      <div class="recovery-content">
+        <div class="flex justify-center mb-8">
+          <img
+            src="./assets/images/logos/Logo.png"
+            alt="Logo Auxilium"
+            class="logo"
+          />
+        </div>
 
-      <div class="w-full max-w-sm">
-        <h1 class="text-2xl font-bold text-center mb-2 text-gray-800">
-          Recuperar senha
-        </h1>
-        <p class="text-center text-gray-500 mb-6">
-          Digite seu e-mail para receber as instruções de recuperação
-        </p>
+        <div class="w-full max-w-sm">
+          <h1 class="text-3xl font-bold text-center mb-2 text-white">
+            Recuperar senha
+          </h1>
+          <p class="text-center text-white opacity-90 mb-8 text-sm">
+            Digite seu e-mail para receber as instruções de recuperação
+          </p>
 
-        <form id="recoveryForm" class="space-y-4">
-          <div>
-            <div class="relative">
-              <div
-                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
-              >
-                <i class="fas fa-envelope text-gray-400"></i>
+          <form id="recoveryForm">
+            <div class="mb-4">
+              <label for="recoveryEmail" class="sr-only">Email</label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fas fa-envelope input-icon"></i>
+                </span>
+                <input
+                  type="email"
+                  id="recoveryEmail"
+                  name="recoveryEmail"
+                  autocomplete="off"
+                  autocapitalize="none"
+                  autocorrect="off"
+                  spellcheck="false"
+                  class="input-field input-clean h-12 pl-10 w-full px-4 rounded-lg border focus:outline-none font-bold"
+                  placeholder="seu@email.com"
+                  required
+                />
               </div>
-              <input
-                type="email"
-                id="recoveryEmail"
-                class="input-field input-clean h-11 pl-10 w-full px-4 rounded-lg border focus:outline-none focus:ring-2 focus:ring-sky-300"
-                placeholder="Seu e-mail cadastrado"
-                required
-              />
             </div>
-          </div>
 
-          <button
-            type="submit"
-            class="w-full h-11 flex justify-center items-center rounded-lg text-white font-medium shadow-sm btn-gradient transition-all active:scale-[.99]"
-          >
-            Enviar instruções
-          </button>
-
-          <div class="text-center mt-4">
-            <a
-              href="#"
-              class="text-sm text-primary-700 hover:text-primary-800 font-medium"
-              id="backToLogin"
-              >Voltar para o login</a
+            <button
+              type="submit"
+              class="w-full h-14 flex justify-center items-center rounded-lg text-white font-medium shadow-sm transition-all active:scale-[.99] bg-gradient-to-b from-[#E83593] to-[#E51B85] mb-4"
             >
-          </div>
-        </form>
+              <i class="fas fa-paper-plane mr-2 text-[14px]"></i>
+              Enviar instruções
+            </button>
+
+            <div class="text-center">
+              <a
+                href="#"
+                class="text-sm text-white hover:text-white/80 font-semibold underline"
+                id="backToLogin"
+              >
+                Voltar para o login
+              </a>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 
