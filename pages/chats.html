@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -17,103 +16,188 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
     <style>
-        :root {
-            --ring-duration: 2s;
-        }
-
+        /* Estilos globais (mantidos e ajustados) */
         body {
             font-family: 'Inter', sans-serif;
             -webkit-tap-highlight-color: transparent;
+            background-color: #f5f6fb;
+            /* Light background like home screen */
+            padding-bottom: 100px;
+            /* Space for fixed input area */
         }
 
-        .pb-28 {
-            padding-bottom: 7rem;
+        .chat-screen-bg {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        .modal-enter {
-            opacity: 0;
-            transform: scale(0.95);
+        /* Estilo para a barra de navegação superior (Header) - changed to white like home screen */
+        .header-bg {
+            background-color: white;
+            /* White header like home screen */
+            color: #333;
+            padding-top: 2rem;
+            padding-bottom: 1rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            /* Subtle shadow like home */
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
         }
 
-        .modal-enter-active {
-            opacity: 1;
-            transform: scale(1);
-            transition: all 0.2s ease-out;
-        }
-
-        .modal-leave-active {
-            opacity: 0;
-            transform: scale(0.95);
-            transition: all 0.2s ease-in;
-        }
-
-        .ring-anim {
+        /* Estilo para a área de conteúdo */
+        .content-area {
+            background-color: #f5f6fb;
+            flex-grow: 1;
             position: relative;
+            margin-top: 100px;
+            /* Space for fixed header */
+            padding-top: 2rem;
+            padding-bottom: 1rem;
+            overflow-y: auto;
+            min-height: calc(100vh - 180px);
         }
 
-        .ring-anim::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: 9999px;
-            opacity: .3;
-            animation: pulseRing var(--ring-duration) ease-out infinite;
-            background: inherit;
+        /* Chat message styles */
+        .message-container {
+            display: flex;
+            margin-bottom: 1rem;
         }
 
-        @keyframes pulseRing {
-            0% {
-                transform: scale(.8);
-                opacity: .3;
+        .message-user {
+            background: linear-gradient(135deg, #8E24AA, #5E35B1);
+            color: white;
+            border-radius: 18px 4px 18px 18px;
+            padding: 12px 16px;
+            max-width: 80%;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        .message-ai {
+            background: white;
+            color: #333;
+            border-radius: 4px 18px 18px 18px;
+            padding: 12px 16px;
+            max-width: 80%;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Estilo para o Input de Mensagem */
+        .input-container-rak {
+            background-color: white;
+            padding: 1rem;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            position: fixed;
+            bottom: 92px;
+            /* Positioned 92px above the bottom to stay above nav bar */
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+
+        .message-input-rak {
+            background-color: #f5f6fb;
+            border-radius: 30px;
+            border: 2px solid #e5e7eb;
+            padding: 0.75rem 1rem;
+            height: 56px;
+            transition: all 0.2s ease;
+        }
+
+        .message-input-rak:focus {
+            border-color: #8E24AA;
+            box-shadow: 0 0 0 3px rgba(142, 36, 170, 0.2);
+        }
+
+        .send-button-rak {
+            background: linear-gradient(135deg, #8E24AA, #5E35B1);
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            box-shadow: 0 4px 12px rgba(142, 36, 170, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .send-button-rak:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(142, 36, 170, 0.4);
+        }
+
+        .send-button-rak:active {
+            transform: translateY(0);
+        }
+
+        /* Estilo das pílulas de tag */
+        .tag-pill {
+            background-color: #f0f0ff;
+            color: #6c5ce7;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .content-area {
+                margin-top: 100px;
+                padding-top: 1rem;
             }
 
-            100% {
-                transform: scale(1.2);
-                opacity: 0;
+            .header-bg {
+                padding-top: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-bg {
+                padding-top: 1.5rem;
+            }
+
+            .message-user,
+            .message-ai {
+                max-width: 90%;
+                padding: 10px 14px;
             }
         }
     </style>
 </head>
 
-<body class="bg-slate-50">
-    <div class="min-h-screen flex flex-col pb-28">
-        <header class="bg-gradient-to-r from-purple-600 via-purple-700 to-violet-600 text-white px-6 pt-12 pb-6">
-            <div class="flex items-center justify-between">
-                <button id="back-button" class="text-white hover:bg-white/10 p-2 rounded-full active:bg-white/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m12 19-7-7 7-7" />
-                        <path d="M19 12H5" />
+<body class="chat-screen-bg">
+
+    <header class="header-bg">
+        <div class="flex items-center justify-between px-5 pb-4">
+            <button class="text-gray-800 hover:bg-gray-100 p-2 rounded-lg active:bg-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" x2="21" y1="12" y2="12"></line>
+                    <line x1="3" x2="21" y1="6" y2="6"></line>
+                    <line x1="3" x2="21" y1="18" y2="18"></line>
+                </svg>
+            </button>
+            <h1 class="text-lg font-bold text-gray-900">Assistente IA</h1>
+            <div class="flex space-x-3">
+                <button class="w-10 h-10 rounded-full bg-gray-300 overflow-hidden border-2 border-orange-400 flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="h-5 w-5 text-gray-600 mx-auto mt-1.5">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
                     </svg>
                 </button>
-
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                        <svg id="header-icon-bot" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 8V4H8" />
-                            <rect width="16" height="12" x="4" y="8" rx="2" />
-                            <path d="M2 14h2" />
-                            <path d="M20 14h2" />
-                            <path d="M15 13v2" />
-                            <path d="M9 13v2" />
-                        </svg>
-                        <svg id="header-icon-conversations" xmlns="http://www.w3.org/2000/svg"
-                            class="h-5 w-5 text-white hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h1 id="header-title" class="text-lg font-semibold">Assistente IA</h1>
-                        <p class="text-xs text-green-300">● Online</p>
-                    </div>
-                </div>
-
-                <div class="w-9"></div>
             </div>
-        </header>
+        </div>
+    </header>
 
 
 
@@ -122,230 +206,59 @@
                 <div class="p-4 space-y-1">
                     <div id="conversations-list"></div>
                 </div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-1">Assistente IA</h2>
+                <p class="text-sm text-gray-600 max-w-sm">Como posso te ajudar hoje?</p>
             </div>
 
-            <div id="conversation-detail-view" class="flex-1 hidden">
-                <div id="conversation-messages" class="flex-1 p-4 space-y-4 overflow-y-auto"></div>
-                <div id="study-suggestion"
-                    class="hidden px-4 py-3 bg-gradient-to-r from-purple-50 to-pink-50 border-t border-purple-100">
-                    <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-4 border border-purple-200">
-                        <div class="flex items-center space-x-3">
-                            <div
-                                class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <path d="M12 16v-4" />
-                                    <path d="M12 8h.01" />
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <h4 class="font-medium text-gray-900">Sessão de Estudo Sugerida</h4>
-                                <p class="text-sm text-gray-600">Criar sessão colaborativa para Cálculo?</p>
-                            </div>
-                            <button
-                                class="px-3 py-1.5 text-sm rounded-xl text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">Criar</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-4 bg-white/80 backdrop-blur-md border-t border-gray-100">
-                    <div class="flex items-center space-x-3">
-                        <div class="flex-1 relative">
-                            <input id="conversation-input" placeholder="Digite uma mensagem..."
-                                class="pr-14 h-12 w-full rounded-2xl border-2 border-gray-200 bg-white/90 backdrop-blur-sm focus:border-purple-300 px-3" />
-                            <button id="conversation-voice"
-                                class="absolute right-2 top-1 h-10 w-10 rounded-full text-gray-400 hover:text-purple-600 hover:bg-purple-50">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-auto" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                                    <line x1="12" x2="12" y1="19" y2="22" />
-                                </svg>
-                            </button>
-                        </div>
-                        <button id="conversation-send"
-                            class="h-12 w-12 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 rounded-full shadow-lg text-white disabled:opacity-50 disabled:cursor-not-allowed">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mx-auto" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="m22 2-7 20-4-9-9-4Z" />
-                                <path d="M22 2 11 13" />
-                            </svg>
-                        </button>
-                    </div>
-                    <div id="conversation-recording"
-                        class="hidden mt-2 flex items-center justify-center space-x-2 text-red-600">
-                        <div class="w-2 h-2 bg-red-600 rounded-full animate-pulse"></div>
-                        <span class="text-sm">Gravando áudio...</span>
-                    </div>
-                </div>
-            </div>
-
-            <div id="ai-view" class="flex-1 flex flex-col">
-                <div class="px-6 py-3 bg-white/70 backdrop-blur-sm border-b border-gray-200">
-                    <div class="flex space-x-1 bg-gray-100 rounded-xl p-1">
-                        <button id="ai-mode-chatbot"
-                            class="flex-1 rounded-lg text-sm transition-all p-1.5 bg-white shadow-sm text-purple-600 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
-                                <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z" />
-                            </svg>
-                            Chat Bot
-                        </button>
-                        <button id="ai-mode-interview"
-                            class="flex-1 rounded-lg text-sm transition-all p-1.5 text-gray-600 hover:text-purple-600 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
-                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                            </svg>
-                            Entrevista
-                        </button>
+            <!-- Chat messages container -->
+            <div class="px-4 pb-4">
+                <div class="message-container">
+                    <div class="message-ai">
+                        <p>Olá! Sou seu assistente de estudos. Como posso te ajudar hoje?</p>
+                        <div class="text-xs text-gray-500 mt-1">10:30</div>
                     </div>
                 </div>
 
-                <div id="chatbot-content" class="flex-1 flex flex-col">
-                    <div id="messages-container" class="flex-1 p-4 space-y-4 overflow-y-auto"></div>
-
-                    <div id="quick-questions-container" class="p-4 bg-white border-t border-gray-100">
-                        <h4 class="text-sm font-medium text-gray-700 mb-3">Perguntas frequentes:</h4>
-                        <div class="space-y-2">
-                            <button
-                                class="quick-question-btn w-full justify-start text-left h-auto p-3 text-sm border rounded-lg bg-gray-50 hover:bg-gray-100">
-                                Como organizar melhor meus estudos?
-                            </button>
-                            <button
-                                class="quick-question-btn w-full justify-start text-left h-auto p-3 text-sm border rounded-lg bg-gray-50 hover:bg-gray-100">
-                                Técnicas de memorização
-                            </button>
-                        </div>
+                <div class="message-container">
+                    <div class="message-user">
+                        <p>Preciso de ajuda com cálculo diferencial</p>
+                        <div class="text-xs text-white/80 mt-1">10:32</div>
                     </div>
                 </div>
 
-                <div id="interview-content" class="flex-1 flex flex-col hidden">
-                    <div id="interview-messages-container" class="flex-1 p-4 space-y-4 overflow-y-auto"></div>
-
-                    <div class="p-4 bg-gradient-to-r from-purple-50 to-pink-50 border-t border-purple-100">
-                        <h3 class="font-semibold text-gray-900 mb-3 text-center">Comece sua entrevista simulada</h3>
-                        <div class="grid grid-cols-2 gap-3">
-                            <button
-                                class="interview-area-btn h-auto p-3 border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-50 transition-all rounded-xl"
-                                data-area="programming">
-                                <div class="flex items-center text-left w-full"><span class="text-2xl mr-3">💻</span>
-                                    <div class="flex-1">
-                                        <h4 class="font-semibold text-gray-900">Programação</h4>
-                                    </div>
-                                </div>
-                            </button>
-                            <button
-                                class="interview-area-btn h-auto p-3 border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-50 transition-all rounded-xl"
-                                data-area="engineering">
-                                <div class="flex items-center text-left w-full"><span class="text-2xl mr-3">⚙️</span>
-                                    <div class="flex-1">
-                                        <h4 class="font-semibold text-gray-900">Engenharia</h4>
-                                    </div>
-                                </div>
-                            </button>
-                            <button
-                                class="interview-area-btn h-auto p-3 border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-50 transition-all rounded-xl"
-                                data-area="medicine">
-                                <div class="flex items-center text-left w-full"><span class="text-2xl mr-3">🏥</span>
-                                    <div class="flex-1">
-                                        <h4 class="font-semibold text-gray-900">Medicina</h4>
-                                    </div>
-                                </div>
-                            </button>
-                            <button
-                                class="interview-area-btn h-auto p-3 border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-50 transition-all rounded-xl"
-                                data-area="law">
-                                <div class="flex items-center text-left w-full"><span class="text-2xl mr-3">⚖️</span>
-                                    <div class="flex-1">
-                                        <h4 class="font-semibold text-gray-900">Direito</h4>
-                                    </div>
-                                </div>
-                            </button>
-                        </div>
+                <div class="message-container">
+                    <div class="message-ai">
+                        <p>Claro! Posso te ajudar com derivadas, integrais ou conceitos específicos de cálculo
+                            diferencial. Qual tópico você gostaria de abordar?</p>
+                        <div class="text-xs text-gray-500 mt-1">10:33</div>
                     </div>
                 </div>
             </div>
         </div>
+    </main>
 
-        <div id="input-area" class="p-4 bg-white/80 backdrop-blur-md border-t border-gray-100">
-            <div class="flex items-center space-x-3">
-                <div class="flex-1 relative">
-                    <input id="message-input" type="text" placeholder="Digite sua mensagem..."
-                        class="pr-14 h-14 w-full rounded-3xl border-2 border-gray-200 bg-white/90 backdrop-blur-sm text-base focus:border-purple-300 px-4" />
-                    <button id="mic-button"
-                        class="absolute right-2 top-2 h-10 w-10 rounded-full text-gray-400 hover:text-purple-600 hover:bg-purple-50">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2">
-                            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-                            <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                            <line x1="12" x2="12" y1="19" y2="22" />
-                        </svg>
-                    </button>
-                </div>
-                <button id="send-button"
-                    class="h-14 w-14 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 rounded-full shadow-lg text-white transition-all active:scale-90 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2">
-                        <path d="m22 2-7 20-4-9-9-4Z" />
-                        <path d="M22 2 11 13" />
-                    </svg>
-                </button>
+    <div class="input-container-rak">
+        <div class="flex space-x-2 mb-3 px-1 overflow-x-auto whitespace-nowrap" style="scrollbar-width: none;">
+            <span class="tag-pill bg-purple-100 text-purple-600">Cálculo</span>
+            <span class="tag-pill bg-blue-100 text-blue-600">Álgebra</span>
+            <span class="tag-pill bg-green-100 text-green-600">Física</span>
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <div class="flex-1 relative">
+                <input id="message-input" type="text" placeholder="Digite sua mensagem..."
+                    class="message-input-rak h-14 w-full px-4 text-gray-900 placeholder-gray-500 focus:outline-none" />
             </div>
-        </div>
-
-      
-        </div>
-    </div>
-
-    <div id="interview-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50 modal-enter">
-        <div id="modal-content"
-            class="bg-gray-900 rounded-3xl shadow-xl w-full max-w-sm p-8 text-center relative overflow-hidden">
-            <button id="modal-close"
-                class="absolute top-4 right-4 text-white/70 hover:text-white hover:bg-white/10 w-10 h-10 rounded-full flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
-                    <path d="M18 6 6 18" />
-                    <path d="m6 6 12 12" />
+            <button id="send-button" class="send-button-rak text-white flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform -rotate-45 -translate-y-px"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m22 2-7 20-4-9-9-4Z" />
+                    <path d="M22 2 11 13" />
                 </svg>
             </button>
-
-            <div class="mx-auto mb-8">
-                <div class="w-32 h-32 mx-auto relative">
-                    <div id="modal-circle-glow" class="absolute inset-0 rounded-full opacity-20 blur-xl"></div>
-                    <div id="modal-circle"
-                        class="relative w-full h-full rounded-full shadow-2xl ring-anim flex items-center justify-center text-4xl">
-                        <span id="modal-circle-icon">💻</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mb-8">
-                <h2 id="modal-title" class="text-xl font-semibold text-white mb-2">Entrevista</h2>
-                <p id="modal-subtitle" class="text-white/70 text-sm mb-4">Subtítulo</p>
-                <p id="modal-description" class="text-white/60 text-sm leading-relaxed">Descrição</p>
-            </div>
-
-            <div class="flex items-center justify-center space-x-4">
-                <button id="modal-cancel"
-                    class="w-12 h-12 rounded-full bg-red-600/20 hover:bg-red-600/30 text-red-400 hover:text-red-300 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2">
-                        <path d="M19 5 5 19" />
-                        <path d="M5 5l14 14" />
-                    </svg>
-                </button>
-                <button id="modal-start-btn"
-                    class="px-6 py-3 rounded-2xl text-white shadow-lg transition-transform active:scale-95">Iniciar
-                    Entrevista</button>
-            </div>
-
-            <p class="text-white/40 text-xs mt-6">Duração estimada: 10-15 minutos</p>
         </div>
     </div>
 
-   
 </body>
 
 </html>
