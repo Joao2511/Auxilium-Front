@@ -35,6 +35,16 @@ export default {
       .eq("id_disciplina", id_disciplina)
       .order("data_entrega", { ascending: true });
 
+    const { data: entregas } = await supabase
+      .from("entrega_tarefa")
+      .select("id_tarefa, status")
+      .eq("id_aluno", session.user.id);
+
+    const entregasMap = {};
+    entregas?.forEach((e) => {
+      entregasMap[e.id_tarefa] = e;
+    });
+
     if (error) {
       console.error("Erro ao carregar tarefas:", error);
       lista.innerHTML =
@@ -48,7 +58,19 @@ export default {
       return;
     }
 
-    lista.innerHTML = tarefas
+    const pendentes = tarefas.filter((t) => {
+      const entrega = entregasMap[t.id_tarefa];
+      return !entrega || !["ENVIADA", "AVALIADA"].includes(entrega.status);
+    });
+
+    // Se nenhuma pendente:
+    if (pendentes.length === 0) {
+      lista.innerHTML = `<p class="text-gray-500 text-center">Nenhuma tarefa pendente 🎉</p>`;
+      return;
+    }
+
+    // Renderizar só as pendentes
+    lista.innerHTML = pendentes
       .map(
         (t) => `
         <div class="modern-card p-4 flex justify-between items-center ">
@@ -297,8 +319,8 @@ export default {
     )
   `
         )
-        .eq("id_tarefa", id_tarefa)
-        .eq("id_aluno", id_aluno)
+        .select("id_tarefa, status")
+        .eq("id_aluno", session.user.id)
         .order("data_submissao", { ascending: true });
 
       if (entregasError) {
