@@ -172,6 +172,9 @@ export async function mountApp() {
               "/ranking",
               "/chats",
               "/config",
+              "/disciplinas",
+              "/tarefas",
+              "/tarefa",
             ];
             navProfessor?.classList.add("hidden");
             navAluno?.classList.remove("hidden");

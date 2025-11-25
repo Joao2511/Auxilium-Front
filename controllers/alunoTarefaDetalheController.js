@@ -7,14 +7,16 @@ export default {
     const res = await fetch("pages/tarefa_detalhe.html");
     app.innerHTML = await res.text();
 
-    const url = new URL(window.location.href);
-    const id_tarefa = parseInt(url.searchParams.get("tid"), 10);
+    const hash = window.location.hash;
+    const paramsString = hash.split("?")[1] || "";
+    const params = new URLSearchParams(paramsString);
+    const id_tarefa = parseInt(params.get("tid"), 10);
     if (!id_tarefa || isNaN(id_tarefa)) {
       alert("Tarefa inválida.");
       return router.navigate("/disciplinas");
     }
 
-    const card = document.getElementById("tarefaCard");
+    const card = document.getElementById("tarefaWrapper");
     const btnEnviar = document.getElementById("btnEnviar");
     const listaEntregas = document.getElementById("entregasLista");
     const btnVoltar = document.getElementById("btnVoltar");
@@ -126,7 +128,7 @@ export default {
           id_tarefa,
           id_aluno,
           caminho_arquivo: path,
-          status: "enviada",
+          status: "ENVIADA",
         });
 
       if (insertError) {

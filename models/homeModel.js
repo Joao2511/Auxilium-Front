@@ -12,8 +12,8 @@ export default function homeModel() {
 
     carregarPerfilUsuario();
     carregarResumoTarefas();
-    carregarEventosProximos();
-    carregarResumoRanking();
+    // carregarEventosProximos();
+    // carregarResumoRanking();
   }
   async function carregarPerfilUsuario() {
     const {
@@ -42,114 +42,146 @@ export default function homeModel() {
     }
   }
   async function carregarResumoTarefas() {
-    const lista = document.getElementById("tarefasPendentes");
+    const container = document.querySelector("#cardsAtividadesPendentes");
 
-    lista.innerHTML = `
-      <div class="skeleton h-16 rounded-lg"></div>
-      <div class="skeleton h-16 rounded-lg"></div>
-    `;
+    container.innerHTML = `
+    <div class="skeleton h-28 rounded-2xl"></div>
+    <div class="skeleton h-28 rounded-2xl"></div>
+    <div class="skeleton h-28 rounded-2xl"></div>
+    <div class="skeleton h-28 rounded-2xl"></div>
+  `;
 
     const {
       data: { session },
     } = await supabase.auth.getSession();
-    if (!session) return;
 
+    if (!session) return;
     const id_aluno = session.user.id;
+
+    const { data: relacoes } = await supabase
+      .from("usuario_disciplina")
+      .select("id_disciplina")
+      .eq("id_usuario", id_aluno);
+
+    if (!relacoes || relacoes.length === 0) {
+      container.innerHTML = `<p class="text-gray-500">Nenhuma disciplina encontrada.</p>`;
+      return;
+    }
+
+    const disciplinasIds = relacoes.map((d) => d.id_disciplina);
 
     const { data: tarefas } = await supabase
       .from("tarefa")
-      .select(
-        "id_tarefa, titulo, data_entrega, pontos_maximos, entrega_tarefa!left(status)"
-      )
-      .eq("entrega_tarefa.id_aluno", id_aluno)
+      .select("id_tarefa, id_disciplina, titulo, data_entrega")
+      .in("id_disciplina", disciplinasIds)
       .order("data_entrega", { ascending: true });
 
-    lista.innerHTML =
-      tarefas && tarefas.length
-        ? tarefas
-            .map(
-              (t) => `
-      <div class="modern-card glass-card p-4 flex justify-between items-center">
-        <div>
-          <h3 class="font-semibold text-gray-900 dark:text-white">${
-            t.titulo
-          }</h3>
-          <p class="text-sm text-gray-500">
-            Entrega até: ${new Date(t.data_entrega).toLocaleDateString("pt-BR")}
-          </p>
-        </div>
-        <a href="/tarefa?tid=${t.id_tarefa}" data-navigo
-          class="bg-[#8E24AA] text-white rounded-full px-4 py-2 font-medium text-sm hover:bg-[#7b1fa2]">
-          Ver
-        </a>
-      </div>`
-            )
-            .join("")
-        : `<p class="text-gray-500 text-center">Nenhuma tarefa pendente 🎉</p>`;
-  }
-
-  async function carregarEventosProximos() {
-    const lista = document.getElementById("eventosProximos");
-    lista.innerHTML = `<div class="skeleton h-14 rounded-lg"></div>`;
-
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (!session) return;
-
-    const { data: eventos } = await supabase
-      .from("agenda_eventos")
-      .select("id_evento, titulo, data, hora")
-      .eq("id_usuario", session.user.id)
-      .order("data", { ascending: true })
-      .limit(3);
-
-    if (!eventos || eventos.length === 0) {
-      lista.innerHTML = `<p class="text-gray-500 text-center">Sem eventos próximos.</p>`;
+    if (!tarefas || tarefas.length === 0) {
+      container.innerHTML = `<p class="text-gray-500">Nenhuma tarefa cadastrada.</p>`;
       return;
     }
 
-    lista.innerHTML = eventos
-      .map(
-        (e) => `
-      <div class="modern-card p-3 flex justify-between items-center">
-        <div>
-          <h4 class="font-medium text-gray-900 dark:text-white">${e.titulo}</h4>
-          <p class="text-sm text-gray-500">
-            ${new Date(e.data).toLocaleDateString("pt-BR")} às ${e.hora || "—"}
-          </p>
-        </div>
-        <i class="fa-regular fa-calendar text-[#8E24AA]"></i>
-      </div>`
-      )
-      .join("");
-  }
+    const { data: entregas } = await supabase
+      .from("entrega_tarefa")
+      .select("id_tarefa, id_aluno, status, data_submissao")
+      .eq("id_aluno", id_aluno);
 
-  async function carregarResumoRanking() {
-    const box = document.getElementById("rankingResumo");
-    box.innerHTML = `<div class="skeleton h-24 rounded-lg"></div>`;
+    console.log("📦 ENTREGAS:", entregas);
 
-    const { data: ranking } = await supabase
-      .from("ranking")
-      .select("usuario(nome_completo), pontuacao")
-      .order("pontuacao", { ascending: false })
-      .limit(5);
+    const entregasMap = {};
 
-    if (!ranking || ranking.length === 0) {
-      box.innerHTML = `<p class="text-gray-500 text-center">Ranking indisponível.</p>`;
+    entregas?.forEach((e) => {
+      if (!entregasMap[e.id_tarefa]) {
+        entregasMap[e.id_tarefa] = [];
+      }
+      entregasMap[e.id_tarefa].push(e);
+    });
+
+    // agora pega a entrega mais recente de cada tarefa
+    Object.keys(entregasMap).forEach((id) => {
+      entregasMap[id] = entregasMap[id].sort(
+        (a, b) => new Date(b.data_submissao) - new Date(a.data_submissao)
+      )[0]; // ← usa só a MAIS NOVA
+    });
+
+    const tarefasFinal = tarefas.map((t) => {
+      const entrega = entregasMap[t.id_tarefa];
+      const agora = new Date();
+      const limite = new Date(t.data_entrega);
+
+      let status = "pendente";
+
+      if (entrega) {
+        const st = entrega.status?.toUpperCase();
+
+        if (st === "AVALIADA" || st === "ENVIADA") {
+          status = "entregue";
+        } else {
+          status = "pendente";
+        }
+      } else if (agora > limite) {
+        status = "atrasado";
+      }
+
+      return {
+        ...t,
+        status,
+        diferenca: limite - agora,
+      };
+    });
+
+    const pendentes = tarefasFinal.filter((t) => t.status !== "entregue");
+    document.getElementById("qtdPendentes").textContent = pendentes.length;
+
+    if (pendentes.length === 0) {
+      container.innerHTML = `<p class="text-gray-500">Nenhuma atividade pendente 🎉</p>`;
       return;
     }
 
-    box.innerHTML = ranking
-      .map(
-        (r, i) => `
-      <div class="flex justify-between items-center p-2 border-b border-gray-100 dark:border-gray-700">
-        <span class="font-medium text-gray-800 dark:text-gray-200">${i + 1}. ${
-          r.usuario?.nome_completo || "Usuário"
-        }</span>
-        <span class="text-[#8E24AA] font-semibold">${r.pontuacao} pts</span>
-      </div>`
-      )
+    container.innerHTML = pendentes
+      .map((t) => {
+        const corDisciplina = ["purple", "orange", "blue", "pink"][
+          t.id_disciplina % 4
+        ];
+        const badgeClass = {
+          purple: "bg-purple-100 text-purple-600",
+          orange: "bg-orange-100 text-orange-600",
+          blue: "bg-blue-100 text-blue-600",
+          pink: "bg-pink-100 text-pink-600",
+        }[corDisciplina];
+
+        const dataEntregaBR = new Date(t.data_entrega)
+          .toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })
+          .replace(",", "");
+
+        return `
+        <div 
+          onclick="window.location.hash = '#/tarefa?tid=${t.id_tarefa}'"
+          class="bg-white border border-gray-200 rounded-2xl p-4 hover:shadow-md transition-shadow cursor-pointer"
+        >
+          <h4 class="font-bold text-gray-900 mb-2">${t.titulo}</h4>
+
+          <div class="flex flex-col space-x-2">
+            <span class="${badgeClass} text-xs font-semibold px-2 py-1 rounded-full">
+              Disciplina ${t.id_disciplina}
+            </span>
+
+            <div class="flex items-center text-xs ${
+              t.status === "atrasado" ? "text-red-500" : "text-gray-600"
+            }">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" 
+                viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" class="mr-1">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              <span>${dataEntregaBR}</span>
+            </div>
+          </div>
+        </div>
+      `;
+      })
       .join("");
   }
 
