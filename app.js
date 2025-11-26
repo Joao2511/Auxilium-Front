@@ -62,7 +62,7 @@ export async function mountApp() {
     "/tarefas",
     "/tarefa",
   ];
-  const profRoutes = ["/profhome", "/profdisciplinas", "/config"];
+  const profRoutes = ["/profhome", "/profdisciplinas", "/proftarefas/:disc", "/proftarefas", "/config"];
 
   router
     .on({
@@ -102,6 +102,11 @@ export async function mountApp() {
 
       "/profhome": () => profHomeController.index(),
       "/profdisciplinas": () => profDisciplinasController.index(),
+      "/proftarefas/:disc": (params) => {
+        // Pass the params to the controller
+        return profTarefasController.index(params);
+      },
+      // Keep the old route for backward compatibility during transition
       "/proftarefas": () => profTarefasController.index(),
       "/proftarefa": () => profTarefasDetalheController.index(),
 
@@ -179,7 +184,7 @@ export async function mountApp() {
             navProfessor?.classList.add("hidden");
             navAluno?.classList.remove("hidden");
           } else if (id_tipo === 2) {
-            allowedRoutes = ["/profhome", "/profdisciplinas", "/config"];
+            allowedRoutes = ["/profhome", "/profdisciplinas", "/proftarefas/:disc", "/proftarefas", "/config"];
             navAluno?.classList.add("hidden");
             navProfessor?.classList.remove("hidden");
           } else if (id_tipo === 3) {

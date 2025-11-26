@@ -99,7 +99,7 @@ async function handleLogout() {
 
 function showLogoutConfirmation() {
   const modalContainer = document.getElementById("confirm-atendimento-modal");
-  
+
   if (!modalContainer) {
     // Fallback to native confirm if modal container doesn't exist
     if (confirm("Tem certeza que deseja sair da sua conta?")) {
@@ -119,7 +119,7 @@ function showLogoutConfirmation() {
           <p class="text-gray-600 text-sm leading-5">Tem certeza que deseja sair da sua conta?</p>
         </div>
         <div class="flex flex-col gap-2">
-          <button id="confirm-logout" class="w-full py-3 text-white bg-[#8E24AA] rounded-full font-semibold hover:bg-[#0c8dc7] transition-colors">
+          <button id="confirm-logout" class="w-full py-3 text-white bg-[#8E24AA] rounded-full font-semibold hover:bg-[#4d135c] transition-colors">
             Sair da conta
           </button>
           <button id="cancel-logout" class="w-full py-3 text-[#8E24AA] bg-transparent font-medium hover:bg-gray-100 rounded-full transition-colors">Cancelar</button>
@@ -133,7 +133,7 @@ function showLogoutConfirmation() {
 
   const modal = document.getElementById("confirm-atendimento-modal");
   const modalContent = document.getElementById("modal-content");
-  
+
   function closeLogoutModal() {
     document.body.classList.remove("no-scroll");
     if (modalContent) modalContent.classList.add("animate-slide-down");
@@ -145,12 +145,14 @@ function showLogoutConfirmation() {
   }
 
   // Close modal when clicking on the backdrop
-  modal.addEventListener("click", (e) => { 
-    if (e.target === modal) closeLogoutModal(); 
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeLogoutModal();
   });
 
   // Cancel button
-  document.getElementById("cancel-logout").addEventListener("click", closeLogoutModal);
+  document
+    .getElementById("cancel-logout")
+    .addEventListener("click", closeLogoutModal);
 
   // Confirm button
   document.getElementById("confirm-logout").addEventListener("click", () => {
