@@ -21,6 +21,16 @@ export default {
       return;
     }
 
+    // Add back button functionality
+    const backButton = document.getElementById("back-button");
+    if (backButton) {
+      backButton.addEventListener("click", () => {
+        history.back();
+      });
+    } else {
+      console.warn("❌ back-button não encontrado no DOM");
+    }
+
     const {
       data: { session },
     } = await supabase.auth.getSession();

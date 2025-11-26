@@ -7,8 +7,7 @@ export default {
     const res = await fetch("pages/tarefas.html");
     app.innerHTML = await res.text();
 
-    await new Promise((r) => requestAnimationFrame(r));
-
+    await new Promise((r) => setTimeout(r, 0));
     const lista = document.getElementById("tarefasLista");
 
     // Better URL parameter parsing
@@ -75,8 +74,10 @@ export default {
     const backButton = document.getElementById("back-button");
     if (backButton) {
       backButton.addEventListener("click", () => {
-        router.navigate("/disciplinas");
+        history.back();
       });
+    } else {
+      console.warn("❌ back-button não encontrado no DOM");
     }
 
     const { data: tarefas, error } = await supabase
