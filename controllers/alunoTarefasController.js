@@ -1,5 +1,6 @@
 import { supabase } from "../utils/supabaseClient.js";
 import { router } from "../app.js";
+import Utils from "../utils.js";
 
 export default {
   async index() {
@@ -45,6 +46,13 @@ export default {
       .eq("id_disciplina", id_disciplina)
       .order("data_entrega", { ascending: true });
 
+    // Load discipline name
+    const { data: disciplina, error: discError } = await supabase
+      .from("disciplina")
+      .select("nome")
+      .eq("id_disciplina", id_disciplina)
+      .single();
+
     const { data: entregas } = await supabase
       .from("entrega_tarefa")
       .select("id_tarefa, status")
@@ -54,6 +62,14 @@ export default {
     entregas?.forEach((e) => {
       entregasMap[e.id_tarefa] = e;
     });
+
+    // Update discipline name
+    if (disciplina) {
+      const nameElement = document.getElementById("disciplineName");
+      if (nameElement) {
+        nameElement.textContent = disciplina.nome;
+      }
+    }
 
     if (error) {
       console.error("Erro ao carregar tarefas:", error);
@@ -72,6 +88,21 @@ export default {
       const entrega = entregasMap[t.id_tarefa];
       return !entrega || !["ENVIADA", "AVALIADA"].includes(entrega.status);
     });
+
+    // Update counter
+    const countElement = document.getElementById("tarefasCount");
+    if (countElement) {
+      countElement.textContent = pendentes.length;
+    }
+
+    // Update status text
+    const completedCount = tarefas.filter(
+      (t) => entregasMap[t.id_tarefa] && ["ENVIADA", "AVALIADA"].includes(entregasMap[t.id_tarefa].status)
+    ).length;
+    const statusElement = document.getElementById("statusText");
+    if (statusElement) {
+      statusElement.textContent = `${completedCount} de ${tarefas.length} concluídas`;
+    }
 
     // Se nenhuma pendente:
     if (pendentes.length === 0) {
@@ -283,8 +314,12 @@ export default {
       const selectedFilesDiv = modal.querySelector("#selectedFiles");
 
       // File input change handler
-      fileInput.addEventListener("change", () => {
-        const files = fileInput.files;
+      // Remove any existing event listeners by cloning the element
+      const newFileInput = fileInput.cloneNode(true);
+      fileInput.parentNode.replaceChild(newFileInput, fileInput);
+
+      newFileInput.addEventListener("change", () => {
+        const files = newFileInput.files;
         if (files.length > 0) {
           selectedFilesDiv.innerHTML = `
             <div class="bg-white rounded-lg p-3 space-y-2">
@@ -425,43 +460,71 @@ export default {
         `;
       }
 
-      btnEnviar.addEventListener("click", async () => {
-        const files = modal.querySelector("#arquivoInput").files;
-        if (!files.length) return alert("Selecione pelo menos um arquivo.");
+    // Remove the original event listener and attach a new one to avoid duplication
+    const newBtnEnviar = btnEnviar.cloneNode(true);
+    btnEnviar.parentNode.replaceChild(newBtnEnviar, btnEnviar);
 
-        for (const file of files) {
-          if (file.size > 20 * 1024 * 1024) {
-            alert(`O arquivo ${file.name} ultrapassa 20 MB!`);
-            continue;
-          }
+    newBtnEnviar.addEventListener("click", async () => {
+      const files = modal.querySelector("#arquivoInput").files;
+      if (!files.length) {
+        Utils.showMessageToast(
+          "warning",
+          "Nenhum arquivo selecionado",
+          "Por favor, selecione pelo menos um arquivo para enviar.",
+          3000
+        );
+        return;
+      }
 
-          const path = `${id_aluno}/${id_tarefa}/${file.name}`;
-
-          const { error: uploadError } = await supabase.storage
-            .from("entregas")
-            .upload(path, file, { upsert: true });
-
-          if (uploadError) {
-            console.error(uploadError);
-            alert(`Erro ao enviar ${file.name}`);
-            continue;
-          }
-
-          await supabase.from("entrega_tarefa").insert({
-            id_tarefa,
-            id_aluno,
-            caminho_arquivo: path,
-            status: "ENVIADA",
-          });
+      for (const file of files) {
+        if (file.size > 20 * 1024 * 1024) {
+          Utils.showMessageToast(
+            "warning",
+            "Arquivo muito grande",
+            `O arquivo ${file.name} ultrapassa 20 MB!`,
+            3000
+          );
+          continue;
         }
 
-        alert("Arquivos enviados com sucesso!");
-        modal.remove();
-        document.body.classList.remove("modal-open");
-        router.navigate(`/tarefas?disc=${id_disciplina}`);
-      });
+        const path = `${id_aluno}/${id_tarefa}/${file.name}`;
 
-      btnFechar.addEventListener("click", () => {
+        const { error: uploadError } = await supabase.storage
+          .from("entregas")
+          .upload(path, file, { upsert: true });
+
+        if (uploadError) {
+          console.error(uploadError);
+          Utils.showMessageToast(
+            "error",
+            "Erro ao enviar arquivo",
+            `Não foi possível enviar o arquivo ${file.name}. Tente novamente.`,
+            5000
+          );
+          continue;
+        }
+
+        await supabase.from("entrega_tarefa").insert({
+          id_tarefa,
+          id_aluno,
+          caminho_arquivo: path,
+          status: "ENVIADA",
+        });
+      }
+
+      Utils.showMessageToast(
+        "success",
+        "Arquivos enviados!",
+        "Seus arquivos foram enviados com sucesso.",
+        3000
+      );
+      modal.remove();
+      document.body.classList.remove("modal-open");
+      // Redirect to disciplines screen
+      router.navigate("/disciplinas");
+    });
+
+    btnFechar.addEventListener("click", () => {
         const wrapper = modal.querySelector(".modal-content-wrapper");
         modal.style.opacity = "0";
         wrapper.style.transform = "scale(0.7)";

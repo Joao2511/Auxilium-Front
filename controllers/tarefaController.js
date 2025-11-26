@@ -1,5 +1,6 @@
 import { supabase } from "../utils/supabaseClient.js";
 import { router } from "../app.js";
+import Utils from "../utils.js";
 
 export default {
   async index() {
@@ -138,8 +139,12 @@ export default {
     }
 
     // === PREVIEW DOS ARQUIVOS ===
-    fileInput.addEventListener("change", () => {
-      const files = fileInput.files;
+    // Remove any existing event listeners by cloning the element
+    const newFileInput = fileInput.cloneNode(true);
+    fileInput.parentNode.replaceChild(newFileInput, fileInput);
+
+    newFileInput.addEventListener("change", () => {
+      const files = newFileInput.files;
 
       if (files.length === 0) {
         selectedFilesDiv.innerHTML = "";
@@ -168,16 +173,31 @@ export default {
     });
 
     // === ENVIO DOS ARQUIVOS ===
-    btnEnviar.addEventListener("click", async () => {
-      const files = fileInput.files;
+    // Remove any existing event listeners by cloning the element
+    const newBtnEnviar = btnEnviar.cloneNode(true);
+    btnEnviar.parentNode.replaceChild(newBtnEnviar, btnEnviar);
+
+    newBtnEnviar.addEventListener("click", async () => {
+      const files = newFileInput.files;
 
       if (!files.length) {
-        return alert("Selecione pelo menos um arquivo.");
+        Utils.showMessageToast(
+          "warning",
+          "Nenhum arquivo selecionado",
+          "Por favor, selecione pelo menos um arquivo para enviar.",
+          3000
+        );
+        return;
       }
 
       for (const file of files) {
         if (file.size > 20 * 1024 * 1024) {
-          alert(`O arquivo ${file.name} ultrapassa 20 MB!`);
+          Utils.showMessageToast(
+            "warning",
+            "Arquivo muito grande",
+            `O arquivo ${file.name} ultrapassa 20 MB!`,
+            3000
+          );
           continue;
         }
 
@@ -188,7 +208,12 @@ export default {
 
         if (uploadError) {
           console.error(uploadError);
-          alert(`Erro ao enviar ${file.name}`);
+          Utils.showMessageToast(
+            "error",
+            "Erro ao enviar arquivo",
+            `Não foi possível enviar o arquivo ${file.name}. Tente novamente.`,
+            5000
+          );
           continue;
         }
 
@@ -201,8 +226,14 @@ export default {
         });
       }
 
-      alert("Arquivos enviados com sucesso!");
-      router.navigate(`/tarefa?tid=${id_tarefa}`);
+      Utils.showMessageToast(
+        "success",
+        "Arquivos enviados!",
+        "Seus arquivos foram enviados com sucesso.",
+        3000
+      );
+      // Redirect to disciplines screen
+      router.navigate("/disciplinas");
     });
 
     // === VOLTAR ===

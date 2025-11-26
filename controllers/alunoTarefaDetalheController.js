@@ -1,5 +1,6 @@
 import { supabase } from "../utils/supabaseClient.js";
 import { router } from "../app.js";
+import Utils from "../utils.js";
 
 export default {
   async index() {
@@ -108,9 +109,21 @@ export default {
       listaEntregas.innerHTML = `<p class="text-gray-500">Nenhuma entrega enviada ainda.</p>`;
     }
 
-    btnEnviar.addEventListener("click", async () => {
+    // Remove any existing event listeners by cloning the element
+    const newBtnEnviar = btnEnviar.cloneNode(true);
+    btnEnviar.parentNode.replaceChild(newBtnEnviar, btnEnviar);
+
+    newBtnEnviar.addEventListener("click", async () => {
       const file = document.getElementById("arquivoInput").files[0];
-      if (!file) return alert("Selecione um arquivo primeiro.");
+      if (!file) {
+        Utils.showMessageToast(
+          "warning",
+          "Nenhum arquivo selecionado",
+          "Por favor, selecione um arquivo para enviar.",
+          3000
+        );
+        return;
+      }
 
       const path = `${id_aluno}/${id_tarefa}/${file.name}`;
       const { error: uploadError } = await supabase.storage
@@ -119,7 +132,13 @@ export default {
 
       if (uploadError) {
         console.error(uploadError);
-        return alert("Erro ao enviar arquivo.");
+        Utils.showMessageToast(
+          "error",
+          "Erro ao enviar arquivo",
+          "Não foi possível enviar o arquivo. Tente novamente.",
+          5000
+        );
+        return;
       }
 
       const { error: insertError } = await supabase
@@ -133,10 +152,21 @@ export default {
 
       if (insertError) {
         console.error(insertError);
-        alert("Erro ao registrar entrega.");
+        Utils.showMessageToast(
+          "error",
+          "Erro ao registrar entrega",
+          "Não foi possível registrar a entrega. Tente novamente.",
+          5000
+        );
       } else {
-        alert("Entrega enviada com sucesso!");
-        router.navigate(`/tarefa?tid=${id_tarefa}`);
+        Utils.showMessageToast(
+          "success",
+          "Entrega enviada!",
+          "Sua entrega foi enviada com sucesso.",
+          3000
+        );
+        // Redirect to disciplines screen
+        router.navigate("/disciplinas");
       }
     });
   },

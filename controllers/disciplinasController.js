@@ -1,5 +1,6 @@
 import { supabase } from "../utils/supabaseClient.js";
 import { router } from "../app.js";
+import Utils from "../utils.js";
 
 export default {
   async index() {
@@ -177,7 +178,12 @@ export default {
           return;
         }
 
-        alert(`Matriculado com sucesso em ${disc.nome}!`);
+        Utils.showMessageToast(
+          "success",
+          "Matrícula realizada!",
+          `Você foi matriculado com sucesso em ${disc.nome}.`,
+          3000
+        );
         await carregarDisciplinas();
       });
     }
