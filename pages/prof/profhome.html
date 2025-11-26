@@ -1,89 +1,92 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Auxilium - Professor</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+      body {
+        font-family: "Inter", sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
     </style>
-</head>
+  </head>
 
-<body class="bg-gray-100">
+  <body class="bg-gray-100">
     <header class="bg-white px-6 pt-10 pb-4">
-        <div class="flex items-center justify-between mb-6">
-            <button id="menu-button" class="text-gray-800 hover:bg-gray-100 p-2 rounded-lg active:bg-gray-200">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="3" y1="12" x2="21" y2="12"/>
-                    <line x1="3" y1="6" x2="21" y2="6"/>
-                    <line x1="3" y1="18" x2="21" y2="18"/>
-                </svg>
-            </button>
-            <div class="flex items-center space-x-4">
-                <button id="notification-button" class="text-gray-800 hover:bg-gray-100 p-2 rounded-full active:bg-gray-200 relative">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-                        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-                    </svg>
-                </button>
-                <button id="profile-button" class="w-12 h-12 rounded-full bg-gray-300 overflow-hidden border-2 border-orange-400 flex">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="h-6 w-6 text-gray-600 mx-auto mt-3">
-                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                    </svg>
-                </button>
-            </div>
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center space-x-4">
+          <button
+            id="notification-button"
+            class="text-gray-800 hover:bg-gray-100 p-2 rounded-full active:bg-gray-200 relative"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+              <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+            </svg>
+          </button>
         </div>
+      </div>
 
-        <div class="mb-4">
-            <h1 class="text-3xl font-bold text-gray-900">Bem-vindo, Professor(a)!</h1>
-            <p class="text-gray-600 mt-1">Gerencie suas disciplinas e tarefas</p>
-        </div>
+      <div class="mb-4">
+        <h1 class="text-3xl font-bold text-gray-900">
+          Bem-vindo, Professor(a)!
+        </h1>
+        <p class="text-gray-600 mt-1">Gerencie suas disciplinas e tarefas</p>
+      </div>
     </header>
 
     <main class="px-6 mt-6 space-y-6 pb-28">
-        <div class="bg-white rounded-3xl p-6 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-xl font-bold text-gray-900">Ações Rápidas</h3>
-            </div>
-            <div class="grid grid-cols-1 gap-3">
-                <a href="/profdisciplinas" data-navigo class="bg-gradient-to-br from-purple-500 to-indigo-600 text-white rounded-2xl p-5 text-center font-bold text-lg hover:shadow-lg transition-all active:scale-95">
-                    Ver Disciplinas
-                </a>
-            </div>
+      <div class="bg-white rounded-3xl p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold text-gray-900">Ações Rápidas</h3>
         </div>
-        
-        <div class="bg-white rounded-3xl p-6 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-xl font-bold text-gray-900">Estatísticas</h3>
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-purple-50 rounded-2xl p-4">
-                    <div class="text-purple-600 font-bold text-2xl">5</div>
-                    <div class="text-gray-600 text-sm">Disciplinas</div>
-                </div>
-                <div class="bg-indigo-50 rounded-2xl p-4">
-                    <div class="text-indigo-600 font-bold text-2xl">12</div>
-                    <div class="text-gray-600 text-sm">Tarefas Criadas</div>
-                </div>
-            </div>
+        <div class="grid grid-cols-1 gap-3">
+          <a
+            href="/profdisciplinas"
+            data-navigo
+            class="bg-gradient-to-br from-purple-500 to-indigo-600 text-white rounded-2xl p-5 text-center font-bold text-lg hover:shadow-lg transition-all active:scale-95"
+          >
+            Ver Disciplinas
+          </a>
         </div>
-    </main>
-</body>
+      </div>
 
+      <div class="bg-white rounded-3xl p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold text-gray-900">Estatísticas</h3>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-purple-50 rounded-2xl p-4">
+            <div class="text-purple-600 font-bold text-2xl">5</div>
+            <div class="text-gray-600 text-sm">Disciplinas</div>
+          </div>
+          <div class="bg-indigo-50 rounded-2xl p-4">
+            <div class="text-indigo-600 font-bold text-2xl">12</div>
+            <div class="text-gray-600 text-sm">Tarefas Criadas</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
 </html>

@@ -309,6 +309,7 @@ export default {
         .select(
           `
     id_entrega,
+    id_tarefa,
     caminho_arquivo,
     data_submissao,
     status,
@@ -319,8 +320,7 @@ export default {
     )
   `
         )
-        .select("id_tarefa, status")
-        .eq("id_aluno", session.user.id)
+        .eq("id_aluno", id_aluno)
         .order("data_submissao", { ascending: true });
 
       if (entregasError) {
