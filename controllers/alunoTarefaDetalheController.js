@@ -13,7 +13,12 @@ export default {
     const params = new URLSearchParams(paramsString);
     const id_tarefa = parseInt(params.get("tid"), 10);
     if (!id_tarefa || isNaN(id_tarefa)) {
-      alert("Tarefa inválida.");
+      Utils.showMessageToast(
+        "error",
+        "Tarefa inválida",
+        "A tarefa selecionada não é válida.",
+        3000
+      );
       return router.navigate("/disciplinas");
     }
 
@@ -61,7 +66,12 @@ export default {
       .single();
 
     if (tarefaError || !tarefa) {
-      alert("Erro ao carregar tarefa.");
+      Utils.showMessageToast(
+        "error",
+        "Erro ao carregar tarefa",
+        "Não foi possível carregar os detalhes da tarefa. Tente novamente.",
+        5000
+      );
       console.error(tarefaError);
       return;
     }

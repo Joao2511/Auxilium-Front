@@ -138,8 +138,15 @@ export default {
       const btn = e.target.closest("[data-open-entrega]");
       if (!btn) return;
       const id_tarefa = parseInt(btn.dataset.id, 10);
-      if (!id_tarefa || Number.isNaN(id_tarefa))
-        return alert("Tarefa inválida.");
+      if (!id_tarefa || Number.isNaN(id_tarefa)) {
+        Utils.showMessageToast(
+          "error",
+          "Tarefa inválida",
+          "A tarefa selecionada não é válida.",
+          3000
+        );
+        return;
+      }
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -155,7 +162,12 @@ export default {
 
       if (tarefaError || !tarefa) {
         console.error(tarefaError);
-        alert("Erro ao carregar detalhes da tarefa.");
+        Utils.showMessageToast(
+          "error",
+          "Erro ao carregar tarefa",
+          "Não foi possível carregar os detalhes da tarefa. Tente novamente.",
+          5000
+        );
         return;
       }
 

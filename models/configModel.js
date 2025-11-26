@@ -97,13 +97,74 @@ async function handleLogout() {
   }
 }
 
+function showLogoutConfirmation() {
+  const modalContainer = document.getElementById("confirm-atendimento-modal");
+  
+  if (!modalContainer) {
+    // Fallback to native confirm if modal container doesn't exist
+    if (confirm("Tem certeza que deseja sair da sua conta?")) {
+      handleLogout();
+    }
+    return;
+  }
+
+  modalContainer.innerHTML = `
+    <div id="modal-content" class="bg-white rounded-t-2xl shadow-lg w-full animate-slide-up transform transition-all duration-300 ease-out">
+      <div class="w-full flex justify-center mt-2">
+        <div class="h-1.5 w-12 bg-gray-300 rounded-full"></div>
+      </div>
+      <div class="py-8 px-6 space-y-6">
+        <div class="text-center space-y-2">
+          <h3 class="text-2xl font-bold text-gray-900">Sair da conta?</h3>
+          <p class="text-gray-600 text-sm leading-5">Tem certeza que deseja sair da sua conta?</p>
+        </div>
+        <div class="flex flex-col gap-2">
+          <button id="confirm-logout" class="w-full py-3 text-white bg-[#8E24AA] rounded-full font-semibold hover:bg-[#0c8dc7] transition-colors">
+            Sair da conta
+          </button>
+          <button id="cancel-logout" class="w-full py-3 text-[#8E24AA] bg-transparent font-medium hover:bg-gray-100 rounded-full transition-colors">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.classList.add("no-scroll");
+  modalContainer.classList.remove("hidden");
+
+  const modal = document.getElementById("confirm-atendimento-modal");
+  const modalContent = document.getElementById("modal-content");
+  
+  function closeLogoutModal() {
+    document.body.classList.remove("no-scroll");
+    if (modalContent) modalContent.classList.add("animate-slide-down");
+    setTimeout(() => {
+      modal?.classList.add("hidden");
+      modalContent?.classList.remove("animate-slide-down");
+      if (modalContent) modalContent.style.transform = "";
+    }, 300);
+  }
+
+  // Close modal when clicking on the backdrop
+  modal.addEventListener("click", (e) => { 
+    if (e.target === modal) closeLogoutModal(); 
+  });
+
+  // Cancel button
+  document.getElementById("cancel-logout").addEventListener("click", closeLogoutModal);
+
+  // Confirm button
+  document.getElementById("confirm-logout").addEventListener("click", () => {
+    closeLogoutModal();
+    handleLogout();
+  });
+}
+
 function setupLogoutButton() {
   const logoutBtn = document.getElementById("logout-menu-item");
   if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      if (confirm("Tem certeza que deseja sair da sua conta?")) {
-        handleLogout();
-      }
+    logoutBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      showLogoutConfirmation();
     });
   }
 }

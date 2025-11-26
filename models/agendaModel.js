@@ -1,5 +1,6 @@
 import { supabase } from "../utils/supabaseClient.js";
 import { router } from "../app.js";
+import Utils from "../utils.js";
 
 export default function agendaModel() {
   console.log("📅 Auxilium | Agenda acadêmica carregada");
@@ -142,9 +143,22 @@ export default function agendaModel() {
       const titulo = modal.querySelector("#tituloEvento").value.trim();
       const hora = modal.querySelector("#horaEvento").value.trim();
 
-      if (!titulo) return alert("Digite um título para o evento.");
+      if (!titulo) {
+        Utils.showMessageToast(
+          "warning",
+          "Título obrigatório",
+          "Digite um título para o evento.",
+          3000
+        );
+        return;
+      }
 
-      alert("Evento salvo com sucesso!");
+      Utils.showMessageToast(
+        "success",
+        "Evento salvo",
+        "Evento salvo com sucesso!",
+        3000
+      );
       modal.remove();
       document.body.classList.remove("modal-open");
       carregarEventos(selectedDate);

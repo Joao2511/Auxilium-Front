@@ -1,4 +1,5 @@
 import * as authModel from "../models/authModel.js";
+import Utils from "../utils.js";
 
 function init() {
   if (window.location.pathname.endsWith("cadastro.html")) {
@@ -11,7 +12,12 @@ function init() {
       const tipo = document.getElementById("cadastro-tipo").value;
 
       if (!nome || !email || !senha) {
-        alert("Por favor, preencha todos os campos.");
+        Utils.showMessageToast(
+          "warning",
+          "Campos obrigatórios",
+          "Por favor, preencha todos os campos.",
+          3000
+        );
         return;
       }
 
@@ -24,16 +30,31 @@ function init() {
         );
 
         if (error) {
-          alert("Erro no cadastro: " + error.message);
-        } else {
-          alert(
-            "Cadastro realizado com sucesso! Você será redirecionado para o login."
+          Utils.showMessageToast(
+            "error",
+            "Erro no cadastro",
+            "Erro no cadastro: " + error.message,
+            5000
           );
-          window.location.href = "login.html";
+        } else {
+          Utils.showMessageToast(
+            "success",
+            "Cadastro realizado!",
+            "Cadastro realizado com sucesso! Você será redirecionado para o login.",
+            3000
+          );
+          setTimeout(() => {
+            window.location.href = "login.html";
+          }, 3500);
         }
       } catch (e) {
         console.error("Erro inesperado no controller:", e);
-        alert("Um erro inesperado ocorreu.");
+        Utils.showMessageToast(
+          "error",
+          "Erro inesperado",
+          "Um erro inesperado ocorreu.",
+          5000
+        );
       }
     });
   }

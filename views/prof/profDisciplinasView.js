@@ -1,3 +1,5 @@
+import Utils from "../../utils.js";
+
 export function renderLista(container, disciplinas) {
   container.innerHTML = "";
   const tpl = document.getElementById("tpl-disciplina");
@@ -11,7 +13,12 @@ export function renderLista(container, disciplinas) {
     );
     el.querySelector("[data-copy]").addEventListener("click", async () => {
       await navigator.clipboard.writeText(d.codigo_matricula);
-      alert("Código copiado!");
+      Utils.showMessageToast(
+        "success",
+        "Código copiado",
+        "Código copiado!",
+        3000
+      );
     });
     container.appendChild(el);
   });

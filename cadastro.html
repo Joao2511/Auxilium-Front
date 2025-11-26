@@ -405,6 +405,7 @@
 
     <script type="module">
       import { supabase } from "../utils/supabaseClient.js";
+      import Utils from "../utils.js";
 
       document.getElementById("toggle-senha").addEventListener("click", () => {
         const input = document.getElementById("cadastro-senha");
@@ -506,17 +507,32 @@
           const justificativa = justificativaInput.value.trim();
 
           if (!nome || !email || !senha) {
-            alert("Preencha todos os campos!");
+            Utils.showMessageToast(
+              "warning",
+              "Campos obrigatórios",
+              "Por favor, preencha todos os campos.",
+              3000
+            );
             return;
           }
 
           if (!idTipo) {
-            alert("Selecione o tipo de conta!");
+            Utils.showMessageToast(
+              "warning",
+              "Tipo de conta",
+              "Por favor, selecione o tipo de conta.",
+              3000
+            );
             return;
           }
 
           if (idTipo === 2 && !justificativa) {
-            alert("Professores precisam informar a justificativa!");
+            Utils.showMessageToast(
+              "warning",
+              "Justificativa necessária",
+              "Professores precisam informar a justificativa.",
+              3000
+            );
             return;
           }
 
@@ -557,11 +573,19 @@
 
               if (solicitacaoError) throw solicitacaoError;
 
-              alert(
-                "✅ Cadastro realizado!\n\nSua solicitação de professor foi enviada para análise. Você receberá um e-mail quando for aprovado."
+              Utils.showMessageToast(
+                "success",
+                "Cadastro realizado!",
+                "Sua solicitação de professor foi enviada para análise. Você receberá um e-mail quando for aprovado.",
+                5000
               );
             } else {
-              alert("✅ Cadastro realizado com sucesso!");
+              Utils.showMessageToast(
+                "success",
+                "Cadastro realizado!",
+                "Sua conta foi criada com sucesso.",
+                3000
+              );
             }
 
             setTimeout(() => {
@@ -569,7 +593,12 @@
             }, 1500);
           } catch (error) {
             console.error("Erro no cadastro:", error);
-            alert(`❌ Erro: ${error.message}`);
+            Utils.showMessageToast(
+              "error",
+              "Erro no cadastro",
+              `Não foi possível realizar o cadastro: ${error.message}`,
+              5000
+            );
           } finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-user-plus mr-2"></i> Cadastrar';

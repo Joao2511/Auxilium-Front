@@ -4,6 +4,7 @@ import {
   avaliarEntrega,
 } from "../../models/prof/profTarefaModel.js";
 import { supabase } from "../../utils/supabaseClient.js";
+import Utils from "../../utils.js";
 
 async function getPublicUrl(path) {
   const { data } = supabase.storage.from("entregas").getPublicUrl(path);
@@ -22,7 +23,12 @@ export default {
 
     if (!id_tarefa || isNaN(id_tarefa)) {
       console.error("⚠️ ID da tarefa inválido:", params.get("tid"));
-      alert("Tarefa inválida. Retornando...");
+      Utils.showMessageToast(
+        "error",
+        "Tarefa inválida",
+        "Tarefa inválida. Retornando...",
+        3000
+      );
       return router.navigate("/profdisciplinas");
     }
 
@@ -63,7 +69,15 @@ export default {
 
         el.querySelector(".__salvar").addEventListener("click", async () => {
           const nota = parseFloat(notaInput.value);
-          if (Number.isNaN(nota)) return alert("Informe uma nota válida.");
+          if (Number.isNaN(nota)) {
+            Utils.showMessageToast(
+              "warning",
+              "Nota inválida",
+              "Informe uma nota válida.",
+              3000
+            );
+            return;
+          }
 
           await avaliarEntrega({
             id_entrega: e.id_entrega,
@@ -71,7 +85,12 @@ export default {
             observacoes: obsInput.value || null,
           });
 
-          alert("✅ Avaliação salva com sucesso!");
+          Utils.showMessageToast(
+            "success",
+            "Avaliação salva",
+            "✅ Avaliação salva com sucesso!",
+            3000
+          );
           await pintar();
         });
 

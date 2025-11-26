@@ -4,6 +4,7 @@ import {
   criarTarefa,
   listarTarefas,
 } from "../../models/prof/profTarefaModel.js";
+import Utils from "../../utils.js";
 
 export default {
   async index() {
@@ -69,7 +70,15 @@ export default {
           10
         );
 
-        if (!titulo) return alert("Digite o título da tarefa.");
+        if (!titulo) {
+          Utils.showMessageToast(
+            "warning",
+            "Título obrigatório",
+            "Digite o título da tarefa.",
+            3000
+          );
+          return;
+        }
 
         const data_entrega = dataStr
           ? new Date(dataStr)
@@ -84,16 +93,26 @@ export default {
             pontos_maximos: pontos || 100,
           });
 
-          alert("Tarefa criada com sucesso!");
+          Utils.showMessageToast(
+            "success",
+            "Tarefa criada",
+            "Tarefa criada com sucesso!",
+            3000
+          );
           document.getElementById("modalNovaTarefa").classList.add("hidden");
           await pintarTarefas();
         } catch (e) {
           console.error(e);
-          alert("Erro ao criar tarefa.");
+          Utils.showMessageToast(
+            "error",
+            "Erro ao criar tarefa",
+            "Erro ao criar tarefa.",
+            5000
+          );
         }
       });
 
-    await pintarAlunos();
+      await pintarAlunos();
     await pintarTarefas();
   },
 };

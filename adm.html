@@ -86,6 +86,7 @@
 
     <script type="module">
       import { supabase } from "../utils/supabaseClient.js";
+      import Utils from "../utils.js";
 
       async function verificarAdmin() {
         const {
@@ -103,8 +104,15 @@
           .single();
 
         if (!usuario || usuario.id_tipo !== 3) {
-          alert("Acesso negado! Você não é administrador.");
-          window.location.href = "home.html";
+          Utils.showMessageToast(
+            "error",
+            "Acesso negado",
+            "Você não tem permissão para acessar esta página.",
+            5000
+          );
+          setTimeout(() => {
+            window.location.href = "home.html";
+          }, 2000);
           return false;
         }
 
@@ -223,11 +231,21 @@
             .update({ status_conta: "ativo" })
             .eq("id_usuario", idUsuario);
 
-          alert("✅ Professor aprovado com sucesso!");
+          Utils.showMessageToast(
+            "success",
+            "Professor aprovado!",
+            "O professor foi aprovado com sucesso.",
+            3000
+          );
           carregarSolicitacoes();
         } catch (error) {
           console.error(error);
-          alert("❌ Erro ao aprovar");
+          Utils.showMessageToast(
+            "error",
+            "Erro ao aprovar",
+            "Não foi possível aprovar o professor. Tente novamente.",
+            5000
+          );
         }
       };
 
@@ -250,11 +268,21 @@
             .update({ status_conta: "inativo" })
             .eq("id_usuario", idUsuario);
 
-          alert("✅ Solicitação rejeitada");
+          Utils.showMessageToast(
+            "success",
+            "Solicitação rejeitada",
+            "A solicitação foi rejeitada com sucesso.",
+            3000
+          );
           carregarSolicitacoes();
         } catch (error) {
           console.error(error);
-          alert("❌ Erro ao rejeitar");
+          Utils.showMessageToast(
+            "error",
+            "Erro ao rejeitar",
+            "Não foi possível rejeitar a solicitação. Tente novamente.",
+            5000
+          );
         }
       };
 

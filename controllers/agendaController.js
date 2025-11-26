@@ -1,5 +1,6 @@
 import { supabase } from "../utils/supabaseClient.js";
 import { router } from "../app.js";
+import Utils from "../utils.js";
 
 const agendaController = {
   eventosPorDia: {},
@@ -402,7 +403,12 @@ const agendaController = {
 
         if (error) {
           console.error(error);
-          alert("Erro ao atualizar evento.");
+          Utils.showMessageToast(
+            "error",
+            "Erro ao atualizar evento",
+            "Não foi possível atualizar o evento. Tente novamente.",
+            5000
+          );
           btnConcluir.disabled = false;
           btnConcluir.textContent = "Concluir";
           return;
@@ -467,8 +473,24 @@ const agendaController = {
         const hora = modal.querySelector("#novoHora").value;
         const desc = modal.querySelector("#novoDesc").value.trim();
 
-        if (!desc) return alert("Digite uma descrição.");
-        if (!hora) return alert("Escolha um horário.");
+        if (!desc) {
+          Utils.showMessageToast(
+            "warning",
+            "Descrição necessária",
+            "Por favor, digite uma descrição para o evento.",
+            3000
+          );
+          return;
+        }
+        if (!hora) {
+          Utils.showMessageToast(
+            "warning",
+            "Horário necessário",
+            "Por favor, escolha um horário para o evento.",
+            3000
+          );
+          return;
+        }
 
         const {
           data: { user },
@@ -483,10 +505,21 @@ const agendaController = {
 
         if (error) {
           console.error(error);
-          return alert("Erro ao salvar evento.");
+          Utils.showMessageToast(
+            "error",
+            "Erro ao salvar evento",
+            "Não foi possível salvar o evento. Tente novamente.",
+            5000
+          );
+          return;
         }
 
-        alert("Evento salvo com sucesso!");
+        Utils.showMessageToast(
+          "success",
+          "Evento salvo!",
+          "O evento foi salvo com sucesso.",
+          3000
+        );
 
         modal.remove();
 
@@ -530,7 +563,13 @@ window.agenda_markDone = async (id_evento, marcar) => {
 
   if (error) {
     console.error(error);
-    return alert("Erro ao atualizar evento.");
+    Utils.showMessageToast(
+      "error",
+      "Erro ao atualizar evento",
+      "Não foi possível atualizar o evento. Tente novamente.",
+      5000
+    );
+    return;
   }
 
   await agendaController.carregarEventosDoAluno();
