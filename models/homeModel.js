@@ -55,7 +55,10 @@ export default function homeModel() {
       data: { session },
     } = await supabase.auth.getSession();
 
-    if (!session) return;
+    if (!session) {
+      document.getElementById("atividadesPendentesCount").textContent = "0 atividades pendentes";
+      return;
+    }
     const id_aluno = session.user.id;
 
     const { data: relacoes } = await supabase
@@ -65,6 +68,7 @@ export default function homeModel() {
 
     if (!relacoes || relacoes.length === 0) {
       container.innerHTML = `<p class="text-gray-500">Nenhuma disciplina encontrada.</p>`;
+      document.getElementById("atividadesPendentesCount").textContent = "0 atividades pendentes";
       return;
     }
 
@@ -78,6 +82,7 @@ export default function homeModel() {
 
     if (!tarefas || tarefas.length === 0) {
       container.innerHTML = `<p class="text-gray-500">Nenhuma tarefa cadastrada.</p>`;
+      document.getElementById("atividadesPendentesCount").textContent = "0 atividades pendentes";
       return;
     }
 
@@ -132,9 +137,11 @@ export default function homeModel() {
 
     const pendentes = tarefasFinal.filter((t) => t.status !== "entregue");
     document.getElementById("qtdPendentes").textContent = pendentes.length;
+    document.getElementById("atividadesPendentesCount").textContent = `${pendentes.length} atividades pendentes`;
 
     if (pendentes.length === 0) {
       container.innerHTML = `<p class="text-gray-500">Nenhuma atividade pendente 🎉</p>`;
+      document.getElementById("atividadesPendentesCount").textContent = "0 atividades pendentes";
       return;
     }
 
