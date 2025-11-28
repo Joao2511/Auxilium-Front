@@ -13,7 +13,7 @@ async function fetchUserRanking(userId) {
     // Fetch user points and ranking position
     const { data: rankingData, error } = await supabase
       .from('usuario')
-      .select('pontuacao')
+      .select('pontos_total')
       .eq('id_usuario', userId)
       .single();
 
@@ -26,11 +26,11 @@ async function fetchUserRanking(userId) {
     const { data: positionData } = await supabase
       .from('usuario')
       .select('id_usuario')
-      .gte('pontuacao', rankingData.pontuacao || 0)
-      .order('pontuacao', { ascending: false });
+      .gte('pontos_total', rankingData.pontos_total || 0)
+      .order('pontos_total', { ascending: false });
 
     const position = positionData ? positionData.findIndex(u => u.id_usuario === userId) + 1 : '-';
-    const points = rankingData.pontuacao || 0;
+    const points = rankingData.pontos_total || 0;
 
     return { position, points };
   } catch (error) {
