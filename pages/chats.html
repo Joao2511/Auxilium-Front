@@ -22,8 +22,6 @@
             -webkit-tap-highlight-color: transparent;
             background-color: #f5f6fb;
             /* Light background like home screen */
-            padding-bottom: 100px;
-            /* Space for fixed input area */
         }
 
         .chat-screen-bg {
@@ -62,6 +60,14 @@
             overflow-y: auto;
             min-height: calc(100vh - 180px);
         }
+        
+        /* Chat content area */
+        #main-content {
+            overflow-y: auto;
+            flex: 1;
+            margin-top: 100px; /* Space for fixed header */
+            margin-bottom: 120px; /* Space for fixed input */
+        }
 
         /* Chat message styles */
         .message-container {
@@ -97,11 +103,11 @@
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
             position: fixed;
-            bottom: 92px;
-            /* Positioned 92px above the bottom to stay above nav bar */
+            bottom: 80px; /* Position above the navigation bar */
             left: 0;
             right: 0;
-            z-index: 10;
+            z-index: 1000; /* Ensure it's above navigation */
+            height: auto;
         }
 
         .message-input-rak {
@@ -157,6 +163,11 @@
             .header-bg {
                 padding-top: 1.5rem;
             }
+            
+            #main-content {
+                margin-top: 80px; /* Adjust for mobile header */
+                margin-bottom: 100px; /* Adjust for mobile input */
+            }
         }
 
         @media (max-width: 480px) {
@@ -179,9 +190,8 @@
         <h1 class="text-lg font-bold text-gray-900">Assistente IA</h1>
     </header>
 
-
-
-        <div id="main-content" class="flex-1 flex flex-col">
+    <main class="flex-1 flex flex-col">
+        <div id="main-content" class="px-4 flex-1 flex flex-col">
             <div id="conversations-view" class="flex-1 hidden">
                 <div class="p-4 space-y-1">
                     <div id="conversations-list"></div>
@@ -191,39 +201,13 @@
             </div>
 
             <!-- Chat messages container -->
-            <div class="px-4 pb-4">
-                <div class="message-container">
-                    <div class="message-ai">
-                        <p>Olá! Sou seu assistente de estudos. Como posso te ajudar hoje?</p>
-                        <div class="text-xs text-gray-500 mt-1">10:30</div>
-                    </div>
-                </div>
-
-                <div class="message-container">
-                    <div class="message-user">
-                        <p>Preciso de ajuda com cálculo diferencial</p>
-                        <div class="text-xs text-white/80 mt-1">10:32</div>
-                    </div>
-                </div>
-
-                <div class="message-container">
-                    <div class="message-ai">
-                        <p>Claro! Posso te ajudar com derivadas, integrais ou conceitos específicos de cálculo
-                            diferencial. Qual tópico você gostaria de abordar?</p>
-                        <div class="text-xs text-gray-500 mt-1">10:33</div>
-                    </div>
-                </div>
+            <div class="px-4 flex-1 overflow-y-auto pb-24" id="messages-container">
             </div>
         </div>
     </main>
 
     <div class="input-container-rak">
-        <div class="flex space-x-2 mb-3 px-1 overflow-x-auto whitespace-nowrap" style="scrollbar-width: none;">
-            <span class="tag-pill bg-purple-100 text-purple-600">Cálculo</span>
-            <span class="tag-pill bg-blue-100 text-blue-600">Álgebra</span>
-            <span class="tag-pill bg-green-100 text-green-600">Física</span>
-        </div>
-
+       
         <div class="flex items-center space-x-3">
             <div class="flex-1 relative">
                 <input id="message-input" type="text" placeholder="Digite sua mensagem..."

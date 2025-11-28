@@ -1,3 +1,5 @@
+import chatsModel from "../models/chatsModel.js";
+
 const chatsController = {
   async index() {
     const app = document.getElementById("app");
