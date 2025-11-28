@@ -1,6 +1,7 @@
 import { supabase } from "../utils/supabaseClient.js";
 import { router } from "../app.js";
 import Utils from "../utils.js";
+import { getPontosDaTarefa } from "../utils/tarefas.js";
 
 export default {
   async index() {
@@ -159,6 +160,17 @@ export default {
           caminho_arquivo: path,
           status: "ENVIADA",
         });
+
+      if (!insertError) {
+        // pegar quantos pontos a tarefa vale usando a função utilitária
+        const pontos = await getPontosDaTarefa(id_tarefa);
+
+        // somar pontos ao aluno
+        await supabase.rpc("adicionar_pontos", {
+          user_id: id_aluno,
+          pontos,
+        });
+      }
 
       if (insertError) {
         console.error(insertError);

@@ -1,6 +1,7 @@
 import { supabase } from "../utils/supabaseClient.js";
 import { router } from "../app.js";
 import Utils from "../utils.js";
+import { getPontosDaTarefa } from "../utils/tarefas.js";
 
 export default {
   async index() {
@@ -521,6 +522,13 @@ export default {
           id_aluno,
           caminho_arquivo: path,
           status: "ENVIADA",
+        });
+
+        // Adicionar pontos ao usuário após entrega da tarefa
+        const pontos = await getPontosDaTarefa(id_tarefa);
+        await supabase.rpc("adicionar_pontos", {
+          user_id: id_aluno,
+          pontos,
         });
       }
 

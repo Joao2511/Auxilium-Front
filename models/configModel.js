@@ -8,6 +8,50 @@ function setLoading(isLoading) {
   if (ct) ct.classList.toggle("hidden", isLoading);
 }
 
+async function fetchUserRanking(userId) {
+  try {
+    // Fetch user points and ranking position
+    const { data: rankingData, error } = await supabase
+      .from('usuario')
+      .select('pontuacao')
+      .eq('id_usuario', userId)
+      .single();
+
+    if (error) {
+      console.error('Error fetching user ranking:', error);
+      return { position: '-', points: 0 };
+    }
+
+    // Get user's position in the ranking
+    const { data: positionData } = await supabase
+      .from('usuario')
+      .select('id_usuario')
+      .gte('pontuacao', rankingData.pontuacao || 0)
+      .order('pontuacao', { ascending: false });
+
+    const position = positionData ? positionData.findIndex(u => u.id_usuario === userId) + 1 : '-';
+    const points = rankingData.pontuacao || 0;
+
+    return { position, points };
+  } catch (error) {
+    console.error('Error in fetchUserRanking:', error);
+    return { position: '-', points: 0 };
+  }
+}
+
+function updateRankingDisplay(position, points) {
+  const positionElement = document.getElementById('user-ranking-position');
+  const pointsElement = document.getElementById('user-points');
+  
+  if (positionElement) {
+    positionElement.textContent = position;
+  }
+  
+  if (pointsElement) {
+    pointsElement.textContent = points.toLocaleString('pt-BR');
+  }
+}
+
 function getInitials(nome = "") {
   const parts = String(nome).trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return "U";
@@ -72,6 +116,10 @@ async function fetchAndApplyProfile() {
       imgEl.src = makeInitialsDataURL(profile.nome_completo);
       imgEl.alt = profile.nome_completo;
     }
+
+    // Fetch and display user ranking
+    const ranking = await fetchUserRanking(user.id);
+    updateRankingDisplay(ranking.position, ranking.points);
   } catch (error) {
     console.error("Erro no configModel:", error.message);
     await handleLogout();

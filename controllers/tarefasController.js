@@ -1,6 +1,7 @@
 import { supabase } from "../utils/supabaseClient.js";
 import { router } from "../app.js";
 import Utils from "../utils.js";
+import { getPontosDaTarefa } from "../utils/tarefas.js";
 
 export default {
   async index() {
@@ -275,6 +276,13 @@ export default {
               });
             if (insertError) throw insertError;
 
+            // Adicionar pontos ao usuário após entrega da tarefa
+            const pontos = await getPontosDaTarefa(taskId);
+            await supabase.rpc("adicionar_pontos", {
+              user_id: session.user.id,
+              pontos,
+            });
+
             // Show success toast notification
             Utils.showMessageToast(
               "success",
@@ -316,6 +324,13 @@ export default {
                 concluida: true,
               });
             if (insertError) throw insertError;
+
+            // Adicionar pontos ao usuário após marcação de tarefa como concluída
+            const pontos = await getPontosDaTarefa(taskId);
+            await supabase.rpc("adicionar_pontos", {
+              user_id: session.user.id,
+              pontos,
+            });
 
             // Show success toast notification
             Utils.showMessageToast(
