@@ -126,7 +126,7 @@ export default {
 
     async function handleAprovar(pedido) {
       try {
-        await aprovarPedido(pedido.id);
+        await aprovarPedido(pedido.id_usuario, pedido.id_disciplina);
         Utils.showMessageToast(
           "success",
           "Pedido aprovado!",
@@ -136,18 +136,19 @@ export default {
         await carregarPedidos();
       } catch (error) {
         console.error("Erro ao aprovar pedido:", error);
-        Utils.showMessageToast(
-          "error",
-          "Erro ao aprovar",
-          error.message,
-          5000
-        );
+        Utils.showMessageToast("error", "Erro ao aprovar", error.message, 5000);
       }
     }
 
     async function handleRecusar(pedido) {
+      const confirmar = confirm(
+        `Tem certeza que deseja recusar o pedido de ${pedido.nome}?`
+      );
+
+      if (!confirmar) return;
+
       try {
-        await recusarPedido(pedido.id);
+        await recusarPedido(pedido.id_usuario, pedido.id_disciplina);
         Utils.showMessageToast(
           "success",
           "Pedido recusado",
@@ -157,12 +158,7 @@ export default {
         await carregarPedidos();
       } catch (error) {
         console.error("Erro ao recusar pedido:", error);
-        Utils.showMessageToast(
-          "error",
-          "Erro ao recusar",
-          error.message,
-          5000
-        );
+        Utils.showMessageToast("error", "Erro ao recusar", error.message, 5000);
       }
     }
 

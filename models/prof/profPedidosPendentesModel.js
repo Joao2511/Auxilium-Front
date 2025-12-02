@@ -39,21 +39,22 @@ export async function listarPedidosPendentes(id_disciplina) {
   });
 }
 
-export async function aprovarPedido(id_pedido) {
-  // Call the Supabase function aprovar_matricula
+export async function aprovarPedido(id_usuario, id_disciplina) {
   const { data, error } = await supabase.rpc("aprovar_matricula", {
-    p_id: id_pedido,
+    p_id_usuario: id_usuario,
+    p_id_disciplina: id_disciplina,
   });
 
   if (error) throw error;
   return data;
 }
 
-export async function recusarPedido(id_pedido) {
+export async function recusarPedido(id_usuario, id_disciplina) {
   const { error } = await supabase
     .from("usuario_disciplina_pendentes")
     .delete()
-    .eq("id", id_pedido);
+    .eq("id_usuario", id_usuario)
+    .eq("id_disciplina", id_disciplina);
 
   if (error) throw error;
   return true;
