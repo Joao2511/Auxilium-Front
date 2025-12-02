@@ -5,8 +5,21 @@ export async function criarTarefa({
   titulo,
   descricao,
   data_entrega,
-  pontos_maximos,
 }) {
+  // Calcular pontos máximos baseado na duração
+  const agora = new Date();
+  const entrega = new Date(data_entrega);
+  const diffHoras = (entrega - agora) / (1000 * 60 * 60);
+  
+  // Base de 100 pontos + 10 pontos por hora.
+  // Isso garante que tarefas curtas valham bastante (alta densidade),
+  // mas tarefas longas valham mais no total.
+  // Ex: 5h -> 150 pts (30/h). 24h -> 340 pts (14/h).
+  let pontos_maximos = Math.round(100 + (diffHoras * 10));
+  
+  // Limitar entre 100 e 1000
+  pontos_maximos = Math.max(100, Math.min(pontos_maximos, 1000));
+
   const { data, error } = await supabase
     .from("tarefa")
     .insert({

@@ -110,25 +110,16 @@
             <input id="tarefaTitulo" type="text"
                 class="w-full border rounded-xl px-3 py-2 mb-3 focus:ring-purple-500 focus:border-purple-500"
                 placeholder="Ex: Exercício de Lógica 2" />
-
             <label class="block mb-2 text-sm font-medium text-gray-700">Descrição</label>
             <textarea id="tarefaDescricao"
                 class="w-full border rounded-xl px-3 py-2 mb-3 focus:ring-purple-500 focus:border-purple-500"
                 placeholder="Explique o que o aluno deve fazer..." rows="3"></textarea>
 
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block mb-2 text-sm font-medium text-gray-700">Data de entrega</label>
-                    <input id="tarefaData" type="datetime-local"
-                        class="w-full border rounded-xl px-3 py-2 focus:ring-purple-500 focus:border-purple-500" />
-                </div>
-
-                <div>
-                    <label class="block mb-2 text-sm font-medium text-gray-700">Pontos</label>
-                    <input id="tarefaPontos" type="number"
-                        class="w-full border rounded-xl px-3 py-2 focus:ring-purple-500 focus:border-purple-500"
-                        value="100" />
-                </div>
+            <div class="mb-3">
+                <label class="block mb-2 text-sm font-medium text-gray-700">Data de entrega</label>
+                <input id="tarefaData" type="datetime-local"
+                    class="w-full border rounded-xl px-3 py-2 focus:ring-purple-500 focus:border-purple-500" />
+                <p class="text-xs text-gray-500 mt-1">Os pontos serão calculados automaticamente com base na duração.</p>
             </div>
 
             <div class="mt-5 flex justify-end gap-3">

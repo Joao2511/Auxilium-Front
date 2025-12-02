@@ -155,7 +155,9 @@ export default {
       listaConcluidas.innerHTML = concluidas
         .map((t) => {
           const entrega = entregasMap[t.id_tarefa];
-          const nota = entrega.nota?.[0]?.nota_valor ?? entrega.nota_calculada;
+          // Agora só consideramos a nota dada pelo professor (nota_valor)
+          // A nota_calculada é apenas para ranking e não deve ser exibida aqui
+          const nota = entrega.nota?.[0]?.nota_valor;
           const temNota = nota !== undefined && nota !== null;
           
           return `
@@ -164,7 +166,7 @@ export default {
             <h3 class="text-lg font-semibold text-gray-700">${t.titulo}</h3>
             <p class="text-sm text-gray-500">
               Entregue em: ${new Date(entrega.data_submissao).toLocaleString()}<br>
-              ${temNota ? `<span class="text-green-600 font-bold">Nota: ${nota} / ${t.pontos_maximos}</span>` : `<span class="text-blue-600 font-medium">Status: ${entrega.status}</span>`}
+              ${temNota ? `<span class="text-green-600 font-bold">Nota: ${nota}</span>` : `<span class="text-gray-500 font-medium">Não avaliada</span>`}
             </p>
           </div>
           <button
@@ -216,7 +218,7 @@ export default {
     async function abrirModalEntrega(id_tarefa, id_aluno) {
       const { data: tarefa, error: tarefaError } = await supabase
         .from("tarefa")
-        .select("titulo, descricao, data_entrega, pontos_maximos")
+        .select("titulo, descricao, data_entrega, pontos_maximos, data_cadastro")
         .eq("id_tarefa", id_tarefa)
         .single();
 
@@ -577,18 +579,46 @@ export default {
           continue;
         }
 
+        // Calcular pontos de GAMIFICAÇÃO (Ranking)
+        // Isso NÃO é a nota da tarefa.
+        const agora = new Date();
+        const dataEntrega = new Date(tarefa.data_entrega);
+        const dataCadastro = new Date(tarefa.data_cadastro);
+        const pontosMaximosRanking = tarefa.pontos_maximos;
+        
+        let pontosGanhosRanking = 0;
+
+        if (agora > dataEntrega) {
+          // Entrega atrasada: 20% dos pontos
+          pontosGanhosRanking = Math.round(pontosMaximosRanking * 0.2);
+        } else {
+          // Entrega no prazo: Decaimento linear
+          const duracaoTotal = dataEntrega.getTime() - dataCadastro.getTime();
+          const tempoRestante = dataEntrega.getTime() - agora.getTime();
+          
+          if (duracaoTotal <= 0) {
+            pontosGanhosRanking = pontosMaximosRanking;
+          } else {
+            const fator = 0.5 + (0.5 * (tempoRestante / duracaoTotal));
+            pontosGanhosRanking = Math.round(pontosMaximosRanking * fator);
+          }
+        }
+
+        // Garantir limites
+        pontosGanhosRanking = Math.max(0, Math.min(pontosGanhosRanking, pontosMaximosRanking));
+
+        // Salvar entrega (sem definir nota ainda, pois o professor que avalia)
         await supabase.from("entrega_tarefa").insert({
           id_tarefa,
           id_aluno,
           caminho_arquivo: path,
-          status: "ENVIADA",
+          status: "ENVIADA"
         });
 
-        // Adicionar pontos ao usuário após entrega da tarefa
-        const pontos = await getPontosDaTarefa(id_tarefa);
+        // Adicionar pontos de RANKING ao usuário
         await supabase.rpc("adicionar_pontos", {
           user_id: id_aluno,
-          pontos,
+          pontos: pontosGanhosRanking,
         });
       }
 

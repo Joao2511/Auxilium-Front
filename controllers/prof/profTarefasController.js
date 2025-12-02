@@ -202,10 +202,6 @@ export default {
           .getElementById("tarefaDescricao")
           .value.trim();
         const dataStr = document.getElementById("tarefaData").value;
-        const pontos = parseInt(
-          document.getElementById("tarefaPontos").value,
-          10
-        );
 
         if (!titulo) {
           Utils.showMessageToast(
@@ -227,7 +223,6 @@ export default {
             titulo,
             descricao,
             data_entrega,
-            pontos_maximos: pontos || 100,
           });
 
           Utils.showMessageToast(
