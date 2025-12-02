@@ -5,6 +5,8 @@ import {
 } from "../../models/prof/profDisciplinaModel.js";
 import { renderLista } from "../../views/prof/profDisciplinasView.js";
 
+let currentHandler = null;
+
 export default {
   async index() {
     const app = document.getElementById("app");
@@ -17,6 +19,11 @@ export default {
     const lista = document.getElementById("listaDisciplinas");
     const btn = document.getElementById("btnNovaDisc");
 
+    // Remove previous listener if it exists
+    if (currentHandler) {
+      window.removeEventListener("reloadDisciplinas", currentHandler);
+    }
+
     const carregar = async () => {
       try {
         const dados = await listarDisciplinasDoProfessor();
@@ -28,6 +35,9 @@ export default {
         lista.innerHTML = `<div class="text-red-500 p-4">Erro ao carregar disciplinas: ${error.message}</div>`;
       }
     };
+
+    // Update current handler reference
+    currentHandler = carregar;
 
     btn.addEventListener("click", async () => {
       const nome = prompt("Nome da disciplina:");
