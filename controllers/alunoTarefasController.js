@@ -17,9 +17,10 @@ export default {
     const id_disciplina = parseInt(params.get("disc"), 10);
 
     const lista = document.getElementById("tarefasLista");
+    const listaConcluidas = document.getElementById("tarefasConcluidasLista");
 
-    if (!lista) {
-      console.error("Error: tarefasLista element not found in DOM");
+    if (!lista || !listaConcluidas) {
+      console.error("Error: Task lists elements not found in DOM");
       return;
     }
 
@@ -56,7 +57,15 @@ export default {
 
     const { data: entregas } = await supabase
       .from("entrega_tarefa")
-      .select("id_tarefa, status")
+      .select(`
+        id_tarefa, 
+        status, 
+        data_submissao, 
+        nota_calculada, 
+        nota (
+          nota_valor
+        )
+      `)
       .eq("id_aluno", session.user.id);
 
     const entregasMap = {};
@@ -108,13 +117,11 @@ export default {
     // Se nenhuma pendente:
     if (pendentes.length === 0) {
       lista.innerHTML = `<p class="text-gray-500 text-center">Nenhuma tarefa pendente 🎉</p>`;
-      return;
-    }
-
-    // Renderizar só as pendentes
-    lista.innerHTML = pendentes
-      .map(
-        (t) => `
+    } else {
+      // Renderizar só as pendentes
+      lista.innerHTML = pendentes
+        .map(
+          (t) => `
         <div class="modern-card p-4 flex justify-between items-center ">
           <div>
             <h3 class="text-lg font-semibold">${t.titulo}</h3>
@@ -132,8 +139,60 @@ export default {
           </button>
         </div>
       `
-      )
-      .join("");
+        )
+        .join("");
+    }
+
+    // Renderizar concluídas
+    const concluidas = tarefas.filter((t) => {
+      const entrega = entregasMap[t.id_tarefa];
+      return entrega && ["ENVIADA", "AVALIADA"].includes(entrega.status);
+    });
+
+    if (concluidas.length === 0) {
+      listaConcluidas.innerHTML = `<p class="text-gray-500 text-center py-4">Nenhuma tarefa concluída ainda.</p>`;
+    } else {
+      listaConcluidas.innerHTML = concluidas
+        .map((t) => {
+          const entrega = entregasMap[t.id_tarefa];
+          const nota = entrega.nota?.[0]?.nota_valor ?? entrega.nota_calculada;
+          const temNota = nota !== undefined && nota !== null;
+          
+          return `
+        <div class="bg-gray-50 border border-gray-200 rounded-2xl p-4 flex justify-between items-center opacity-75 hover:opacity-100 transition-all">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-700">${t.titulo}</h3>
+            <p class="text-sm text-gray-500">
+              Entregue em: ${new Date(entrega.data_submissao).toLocaleString()}<br>
+              ${temNota ? `<span class="text-green-600 font-bold">Nota: ${nota} / ${t.pontos_maximos}</span>` : `<span class="text-blue-600 font-medium">Status: ${entrega.status}</span>`}
+            </p>
+          </div>
+          <button
+            data-open-entrega
+            data-id="${t.id_tarefa}"
+            class="bg-gray-200 text-gray-700 px-4 py-2 rounded-full font-medium hover:bg-gray-300 transition ml-2"
+          >
+            Ver Detalhes
+          </button>
+        </div>
+      `;
+        })
+        .join("");
+    }
+
+    // Event listener for completed tasks
+    listaConcluidas.addEventListener("click", async (e) => {
+      const btn = e.target.closest("[data-open-entrega]");
+      if (!btn) return;
+      const id_tarefa = parseInt(btn.dataset.id, 10);
+      if (!id_tarefa || Number.isNaN(id_tarefa)) {
+        return;
+      }
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      await abrirModalEntrega(id_tarefa, session.user.id);
+    });
 
     lista.addEventListener("click", async (e) => {
       const btn = e.target.closest("[data-open-entrega]");
