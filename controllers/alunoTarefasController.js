@@ -379,6 +379,7 @@ export default {
   `
         )
         .eq("id_aluno", id_aluno)
+        .eq("id_tarefa", id_tarefa)
         .order("data_submissao", { ascending: true });
 
       if (entregasError) {
