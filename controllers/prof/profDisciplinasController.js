@@ -43,6 +43,9 @@ export default {
       }
     });
 
+    // Listen for reload event from delete action
+    window.addEventListener("reloadDisciplinas", carregar);
+
     await carregar();
   },
 };

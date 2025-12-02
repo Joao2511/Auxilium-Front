@@ -23,17 +23,7 @@
 <body class="bg-gray-100">
     <header class="bg-white px-6 pt-10 pb-4">
         <div class="flex items-center justify-between mb-6">
-            <button id="menu-button" class="text-gray-800 hover:bg-gray-100 p-2 rounded-lg active:bg-gray-200">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="3" y1="12" x2="21" y2="12"/>
-                    <line x1="3" y1="6" x2="21" y2="6"/>
-                    <line x1="3" y1="18" x2="21" y2="18"/>
-                </svg>
-            </button>
-        </div>
-
-        <div class="mb-4">
+            <div class="mb-4">
             <h1 class="text-3xl font-bold text-gray-900">Minhas Disciplinas</h1>
             <p class="text-gray-600 mt-1">Gerencie suas disciplinas e alunos</p>
         </div>
@@ -58,14 +48,20 @@
 
     <template id="tpl-disciplina">
         <div class="bg-white border border-gray-200 rounded-2xl p-4 hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h3 class="font-semibold text-lg __nome"></h3>
+            <div class="flex items-center justify-between gap-3">
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-semibold text-lg __nome truncate"></h3>
                     <div class="text-xs text-gray-500">Código: <span class="__codigo font-mono"></span></div>
                 </div>
-                <div class="flex gap-2">
-                    <button class="px-3 py-2 rounded-full bg-gray-100 hover:bg-gray-200 transition __copy">Copiar código</button>
-                    <a class="px-3 py-2 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 text-white hover:shadow-md transition __open">Entrar</a>
+                <div class="flex gap-2 flex-shrink-0">
+                    <button class="px-3 py-2 rounded-full bg-gray-100 hover:bg-gray-200 transition __copy whitespace-nowrap">Copiar código</button>
+                    <a class="px-3 py-2 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 text-white hover:shadow-md transition __open whitespace-nowrap">Entrar</a>
+                    <button class="__delete px-3 py-2 rounded-full bg-gradient-to-br from-red-500 to-red-600 text-white hover:shadow-md transition whitespace-nowrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>

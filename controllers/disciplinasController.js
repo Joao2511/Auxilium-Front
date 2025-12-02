@@ -67,13 +67,18 @@ export default {
                   <span class="inline-block bg-purple-100 text-purple-700 text-xs font-semibold px-3 py-1 rounded-full truncate max-w-full">${d.disciplina.codigo_matricula || "—"}</span>
                 </div>
               </div>
-              <a href="/tarefas?disc=${d.disciplina.id_disciplina}" data-navigo
-                class="flex items-center space-x-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full font-semibold text-sm hover:shadow-lg transition-all active:scale-95 flex-shrink-0 whitespace-nowrap">
-                <span>Ver tarefas</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="9 18 15 12 9 6"/>
-                </svg>
-              </a>
+              <div class="flex flex-col gap-2 flex-shrink-0">
+                <a href="/tarefas?disc=${d.disciplina.id_disciplina}" data-navigo
+                  class="flex items-center space-x-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full font-semibold text-sm hover:shadow-lg transition-all active:scale-95 whitespace-nowrap">
+                  <span>Ver tarefas</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </a>
+                <button class="btn-sair bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-full font-semibold text-sm hover:shadow-lg transition-all active:scale-95 whitespace-nowrap" data-disc-id="${d.disciplina.id_disciplina}" data-disc-nome="${d.disciplina.nome}">
+                  Sair da Disciplina
+                </button>
+              </div>
             </div>
           </div>
         `
@@ -105,14 +110,14 @@ export default {
               <line x1="12" y1="5" x2="12" y2="19"/>
               <line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
-            <span>Entrar em uma disciplina</span>
+            <span>Enviar Pedido de Matrícula</span>
           </button>
           <div id="formEntrar" class="mt-4 hidden">
             <input id="codigoDisciplina" type="text" placeholder="Digite o código da disciplina"
               class="border-2 border-gray-300 rounded-full px-4 py-3 w-full text-center font-medium
                     focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" />
             <button id="btnConfirmar" class="mt-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-full font-semibold w-full hover:shadow-lg transition-all active:scale-95">
-              Confirmar
+              Enviar Pedido
             </button>
             <p id="msgErro" class="text-red-500 text-sm mt-3 font-medium hidden"></p>
           </div>
@@ -129,6 +134,49 @@ export default {
 
       btnEntrar.addEventListener("click", () => {
         formEntrar.classList.toggle("hidden");
+      });
+      
+      // Add event listeners for unenrollment buttons
+      document.querySelectorAll(".btn-sair").forEach((btn) => {
+        btn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const discId = parseInt(btn.dataset.discId, 10);
+          const discNome = btn.dataset.discNome;
+          
+          const confirmar = confirm(
+            `Tem certeza que deseja sair da disciplina "${discNome}"?\n\nVocê perderá acesso a todas as tarefas e conteúdos.`
+          );
+          
+          if (!confirmar) return;
+          
+          try {
+            const { error } = await supabase
+              .from("usuario_disciplina")
+              .delete()
+              .eq("id_usuario", session.user.id)
+              .eq("id_disciplina", discId);
+            
+            if (error) throw error;
+            
+            Utils.showMessageToast(
+              "success",
+              "Desmatriculado!",
+              `Você saiu da disciplina "${discNome}".`,
+              3000
+            );
+            await carregarDisciplinas();
+          } catch (error) {
+            console.error("Erro ao desmatricular:", error);
+            Utils.showMessageToast(
+              "error",
+              "Erro ao sair",
+              error.message,
+              5000
+            );
+          }
+        });
       });
 
       btnConfirmar.addEventListener("click", async () => {
@@ -153,38 +201,39 @@ export default {
           return;
         }
 
-        const { data: jaMatriculado } = await supabase
-          .from("usuario_disciplina")
-          .select("id_disciplina")
+        const { data: jaPendente } = await supabase
+          .from("usuario_disciplina_pendentes")
+          .select("id")
           .eq("id_usuario", session.user.id)
           .eq("id_disciplina", disc.id_disciplina);
 
-        if (jaMatriculado && jaMatriculado.length > 0) {
-          msgErro.textContent = "Você já está matriculado nesta disciplina.";
+        if (jaPendente && jaPendente.length > 0) {
+          msgErro.textContent = "Você já enviou um pedido para esta disciplina.";
           msgErro.classList.remove("hidden");
           return;
         }
 
         const { error: insertError } = await supabase
-          .from("usuario_disciplina")
+          .from("usuario_disciplina_pendentes")
           .insert({
             id_usuario: session.user.id,
             id_disciplina: disc.id_disciplina,
           });
 
         if (insertError) {
-          msgErro.textContent = "Erro ao entrar: " + insertError.message;
+          msgErro.textContent = "Erro ao enviar pedido: " + insertError.message;
           msgErro.classList.remove("hidden");
           return;
         }
 
         Utils.showMessageToast(
           "success",
-          "Matrícula realizada!",
-          `Você foi matriculado com sucesso em ${disc.nome}.`,
+          "Pedido enviado!",
+          `Seu pedido para entrar em ${disc.nome} foi enviado ao professor.`,
           3000
         );
-        await carregarDisciplinas();
+        document.getElementById("codigoDisciplina").value = "";
+        formEntrar.classList.add("hidden");
       });
     }
 

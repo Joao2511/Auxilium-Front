@@ -3,6 +3,7 @@ import { listarAlunosDaDisciplina } from "../../models/prof/profDisciplinaModel.
 import {
   criarTarefa,
   listarTarefas,
+  deletarTarefa,
 } from "../../models/prof/profTarefaModel.js";
 import Utils from "../../utils.js";
 
@@ -78,6 +79,20 @@ export default {
       }
     }
 
+    // Setup navigation buttons
+    const btnPedidosPendentes = document.getElementById("btnPedidosPendentes");
+    const btnListaAlunos = document.getElementById("btnListaAlunos");
+    
+    if (btnPedidosPendentes) {
+      btnPedidosPendentes.setAttribute("href", `/profpedidos?disc=${id_disciplina}`);
+      btnPedidosPendentes.setAttribute("data-navigo", "");
+    }
+    
+    if (btnListaAlunos) {
+      btnListaAlunos.setAttribute("href", `/profalunos?disc=${id_disciplina}`);
+      btnListaAlunos.setAttribute("data-navigo", "");
+    }
+
     async function pintarTarefas() {
       try {
         const dados = await listarTarefas(id_disciplina);
@@ -117,6 +132,16 @@ export default {
             openLink.setAttribute("data-navigo", "");
           }
           
+          // Add delete button handler
+          const deleteBtn = el.querySelector(".__delete");
+          if (deleteBtn) {
+            deleteBtn.addEventListener("click", (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleDeletarTarefa(t);
+            });
+          }
+          
           lista.appendChild(el);
         });
         
@@ -129,6 +154,33 @@ export default {
       } catch (error) {
         console.error("Erro ao carregar tarefas:", error);
         lista.innerHTML = `<div class="text-red-500 p-4">Erro ao carregar tarefas: ${error.message}</div>`;
+      }
+    }
+
+    async function handleDeletarTarefa(tarefa) {
+      const confirmar = confirm(
+        `Tem certeza que deseja deletar a tarefa "${tarefa.titulo}"?\n\nEsta ação não pode ser desfeita e todas as entregas serão perdidas.`
+      );
+
+      if (!confirmar) return;
+
+      try {
+        await deletarTarefa(tarefa.id_tarefa);
+        Utils.showMessageToast(
+          "success",
+          "Tarefa deletada!",
+          `A tarefa "${tarefa.titulo}" foi removida com sucesso.`,
+          3000
+        );
+        await pintarTarefas();
+      } catch (error) {
+        console.error("Erro ao deletar tarefa:", error);
+        Utils.showMessageToast(
+          "error",
+          "Erro ao deletar",
+          error.message,
+          5000
+        );
       }
     }
 

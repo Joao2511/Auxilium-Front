@@ -106,3 +106,13 @@ export async function avaliarEntrega({ id_entrega, nota_valor, observacoes }) {
 
   return true;
 }
+
+export async function deletarTarefa(id_tarefa) {
+  const { error } = await supabase
+    .from("tarefa")
+    .delete()
+    .eq("id_tarefa", id_tarefa);
+
+  if (error) throw error;
+  return true;
+}

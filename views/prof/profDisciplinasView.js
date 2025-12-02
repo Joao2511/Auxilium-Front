@@ -1,4 +1,5 @@
 import Utils from "../../utils.js";
+import { deletarDisciplina } from "../../models/prof/profDisciplinaModel.js";
 
 export function renderLista(container, disciplinas) {
   container.innerHTML = "";
@@ -45,6 +46,42 @@ export function renderLista(container, disciplinas) {
           "Código copiado!",
           3000
         );
+      });
+    }
+    
+    // Add delete button handler
+    const deleteButton = el.querySelector(".__delete");
+    if (deleteButton) {
+      deleteButton.addEventListener("click", async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const confirmar = confirm(
+          `Tem certeza que deseja deletar a disciplina "${d.nome}"?\n\nEsta ação não pode ser desfeita e todas as tarefas e matrículas serão perdidas.`
+        );
+        
+        if (!confirmar) return;
+        
+        try {
+          await deletarDisciplina(d.id_disciplina);
+          Utils.showMessageToast(
+            "success",
+            "Disciplina deletada!",
+            `A disciplina "${d.nome}" foi removida com sucesso.`,
+            3000
+          );
+          // Reload the list
+          const event = new CustomEvent("reloadDisciplinas");
+          window.dispatchEvent(event);
+        } catch (error) {
+          console.error("Erro ao deletar disciplina:", error);
+          Utils.showMessageToast(
+            "error",
+            "Erro ao deletar",
+            error.message,
+            5000
+          );
+        }
       });
     }
     

@@ -42,3 +42,20 @@ export async function listarAlunosDaDisciplina(id_disciplina) {
     email: r.usuario?.email_institucional,
   }));
 }
+
+export async function deletarDisciplina(id_disciplina) {
+  console.log("Iniciando deleção da disciplina:", id_disciplina);
+  
+  // Call the Supabase function that handles cascade deletion
+  const { data, error } = await supabase.rpc("deletar_disciplina_completa", {
+    p_id_disciplina: id_disciplina,
+  });
+
+  if (error) {
+    console.error("Erro ao deletar disciplina:", error);
+    throw error;
+  }
+  
+  console.log("Disciplina deletada com sucesso!");
+  return true;
+}

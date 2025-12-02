@@ -12,6 +12,8 @@ import profHomeController from "./controllers/prof/profHomeController.js";
 import profDisciplinasController from "./controllers/prof/profDisciplinasController.js";
 import profTarefasController from "./controllers/prof/profTarefasController.js";
 import profTarefasDetalheController from "./controllers/prof/profTarefaDetalheController.js";
+import profPedidosPendentesController from "./controllers/prof/profPedidosPendentesController.js";
+import profAlunosDisciplinaController from "./controllers/prof/profAlunosDisciplinaController.js";
 import disciplinasController from "./controllers/disciplinasController.js";
 import alunoTarefasController from "./controllers/alunoTarefasController.js";
 import alunoTarefaDetalheController from "./controllers/alunoTarefaDetalheController.js";
@@ -62,7 +64,7 @@ export async function mountApp() {
     "/tarefas",
     "/tarefa",
   ];
-  const profRoutes = ["/profhome", "/profdisciplinas", "/proftarefas/:disc", "/proftarefas", "/config"];
+  const profRoutes = ["/profhome", "/profdisciplinas", "/proftarefas/:disc", "/proftarefas", "/profpedidos", "/profalunos", "/config"];
 
   router
     .on({
@@ -109,6 +111,8 @@ export async function mountApp() {
       // Keep the old route for backward compatibility during transition
       "/proftarefas": () => profTarefasController.index(),
       "/proftarefa": () => profTarefasDetalheController.index(),
+      "/profpedidos": (params) => profPedidosPendentesController.index(params),
+      "/profalunos": (params) => profAlunosDisciplinaController.index(params),
 
       "/config": () => configController.index(),
     })
@@ -184,7 +188,7 @@ export async function mountApp() {
             navProfessor?.classList.add("hidden");
             navAluno?.classList.remove("hidden");
           } else if (id_tipo === 2) {
-            allowedRoutes = ["/profhome", "/profdisciplinas", "/proftarefas/:disc", "/proftarefas", "/config"];
+            allowedRoutes = ["/profhome", "/profdisciplinas", "/proftarefas/:disc", "/proftarefas", "/profpedidos", "/profalunos", "/config"];
             navAluno?.classList.add("hidden");
             navProfessor?.classList.remove("hidden");
           } else if (id_tipo === 3) {
