@@ -39,6 +39,16 @@ export async function listarPedidosPendentes(id_disciplina) {
   });
 }
 
+export async function contarPedidosPendentes(id_disciplina) {
+  const { count, error } = await supabase
+    .from("usuario_disciplina_pendentes")
+    .select("*", { count: "exact" })
+    .eq("id_disciplina", id_disciplina);
+
+  if (error) throw error;
+  return count;
+}
+
 export async function aprovarPedido(id_usuario, id_disciplina) {
   const { data, error } = await supabase.rpc("aprovar_matricula", {
     p_id_usuario: id_usuario,

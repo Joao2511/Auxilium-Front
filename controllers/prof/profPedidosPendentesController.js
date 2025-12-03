@@ -3,6 +3,7 @@ import {
   listarPedidosPendentes,
   aprovarPedido,
   recusarPedido,
+  contarPedidosPendentes,
 } from "../../models/prof/profPedidosPendentesModel.js";
 import Utils from "../../utils.js";
 
@@ -47,6 +48,8 @@ export default {
       try {
         pedidosCache = await listarPedidosPendentes(id_disciplina);
         renderizarPedidos(pedidosCache);
+        // Update the count in the header
+        await atualizarContadorPedidos(id_disciplina);
       } catch (error) {
         console.error("Erro ao carregar pedidos:", error);
         lista.innerHTML = `
@@ -54,6 +57,18 @@ export default {
             Erro ao carregar pedidos: ${error.message}
           </div>
         `;
+      }
+    }
+
+    async function atualizarContadorPedidos(id_disciplina) {
+      try {
+        const count = await contarPedidosPendentes(id_disciplina);
+        const countElement = document.getElementById("contadorPedidos");
+        if (countElement) {
+          countElement.textContent = count;
+        }
+      } catch (error) {
+        console.error("Erro ao contar pedidos:", error);
       }
     }
 

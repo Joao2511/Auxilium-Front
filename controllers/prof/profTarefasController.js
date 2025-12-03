@@ -172,65 +172,118 @@ export default {
       }
     }
 
+    // Modal handling
+    const modal = document.getElementById("modalNovaTarefa");
+    const formNovaTarefa = document.getElementById("formNovaTarefa");
+    const btnFecharModal = document.getElementById("btnFecharModal");
+    
     btn.addEventListener("click", () => {
-      document.getElementById("modalNovaTarefa").classList.remove("hidden");
+      modal.classList.remove("hidden");
+      document.body.classList.add("no-scroll");
+      
+      // Focus on the title field
+      setTimeout(() => {
+        const tituloInput = document.getElementById("tarefaTitulo");
+        if (tituloInput) tituloInput.focus();
+      }, 100);
     });
 
-    document
-      .getElementById("btnCancelarTarefa")
-      .addEventListener("click", () => {
-        document.getElementById("modalNovaTarefa").classList.add("hidden");
-      });
+    // Close modal functions
+    const fecharModal = () => {
+      modal.classList.add("hidden");
+      document.body.classList.remove("no-scroll");
+      // Clear the form
+      formNovaTarefa.reset();
+    };
 
-    document
-      .getElementById("btnSalvarTarefa")
-      .addEventListener("click", async () => {
-        const titulo = document.getElementById("tarefaTitulo").value.trim();
-        const descricao = document
-          .getElementById("tarefaDescricao")
-          .value.trim();
-        const dataStr = document.getElementById("tarefaData").value;
+    // Close modal events
+    btnFecharModal.addEventListener("click", fecharModal);
+    document.getElementById("btnCancelarTarefa").addEventListener("click", fecharModal);
 
-        if (!titulo) {
-          Utils.showMessageToast(
-            "warning",
-            "Título obrigatório",
-            "Digite o título da tarefa.",
-            3000
-          );
-          return;
+    // Close modal when clicking outside content (on the backdrop)
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        fecharModal();
+      }
+    });
+
+    // Handle form submission
+    formNovaTarefa.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const titulo = document.getElementById("tarefaTitulo").value.trim();
+      const descricao = document.getElementById("tarefaDescricao").value.trim();
+      const dateStr = document.getElementById("tarefaDate").value;
+      const timeStr = document.getElementById("tarefaTime").value;
+
+      if (!titulo) {
+        Utils.showMessageToast(
+          "warning",
+          "Título obrigatório",
+          "Digite o título da tarefa.",
+          3000
+        );
+        return;
+      }
+
+      // Combine date and time
+      let data_entrega;
+      if (dateStr) {
+        if (timeStr) {
+          // Combine date and time
+          data_entrega = new Date(`${dateStr}T${timeStr}`);
+        } else {
+          // Only date provided, use midnight
+          data_entrega = new Date(dateStr);
         }
+      } else {
+        // No date provided, use default (3 days from now)
+        data_entrega = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+      }
 
-        const data_entrega = dataStr
-          ? new Date(dataStr)
-          : new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+      try {
+        // Disable submit button during submission
+        const salvarBtn = document.getElementById("btnSalvarTarefa");
+        const originalText = salvarBtn.innerHTML;
+        salvarBtn.innerHTML = '<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>';
+        salvarBtn.disabled = true;
 
-        try {
-          await criarTarefa({
-            id_disciplina,
-            titulo,
-            descricao,
-            data_entrega,
-          });
+        await criarTarefa({
+          id_disciplina,
+          titulo,
+          descricao,
+          data_entrega,
+        });
 
-          Utils.showMessageToast(
-            "success",
-            "Tarefa criada",
-            "Tarefa criada com sucesso!",
-            3000
-          );
-          document.getElementById("modalNovaTarefa").classList.add("hidden");
-          await pintarTarefas();
-        } catch (e) {
-          console.error(e);
-          Utils.showMessageToast(
-            "error",
-            "Erro ao criar tarefa",
-            "Erro ao criar tarefa.",
-            5000
-          );
-        }
-      });
+        // Re-enable submit button
+        salvarBtn.innerHTML = originalText;
+        salvarBtn.disabled = false;
+
+        Utils.showMessageToast(
+          "success",
+          "Tarefa criada",
+          "Tarefa criada com sucesso!",
+          3000
+        );
+        
+        fecharModal();
+        await pintarTarefas();
+      } catch (e) {
+        console.error(e);
+        
+        // Re-enable submit button
+        const salvarBtn = document.getElementById("btnSalvarTarefa");
+        salvarBtn.innerHTML = "Criar Tarefa";
+        salvarBtn.disabled = false;
+        
+        Utils.showMessageToast(
+          "error",
+          "Erro ao criar tarefa",
+          "Erro ao criar tarefa.",
+          5000
+        );
+      }
+    });
 
     await pintarAlunos();
     await pintarTarefas();
