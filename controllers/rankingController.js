@@ -42,6 +42,14 @@ const rankingController = {
       
       // Set up visibility toggle
       this.setupVisibilityToggle(user.id, rankings);
+      
+      // Set up back button event listener
+      const backButton = document.getElementById("back-button");
+      if (backButton) {
+        backButton.addEventListener("click", () => {
+          window.location.hash = "/config";
+        });
+      }
     } catch (error) {
       console.error("Error initializing ranking model:", error);
     }
