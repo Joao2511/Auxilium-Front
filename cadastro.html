@@ -545,52 +545,30 @@
               await supabase.auth.signUp({
                 email,
                 password: senha,
+                options: {
+                  emailRedirectTo: `${window.location.origin}/pages/email-confirmado.html`,
+                  data: {
+                    nome_completo: nome,
+                    id_tipo: idTipo,
+                    status_conta: idTipo === 2 ? "pendente_aprovacao" : "ativo",
+                    justificativa: idTipo === 2 ? justificativa : null
+                  }
+                }
               });
 
             if (authError) throw authError;
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-
-            const statusConta = idTipo === 2 ? "pendente_aprovacao" : "ativo";
-
-            const { error: updateError } = await supabase
-              .from("usuario")
-              .update({
-                nome_completo: nome,
-                id_tipo: idTipo,
-                status_conta: statusConta,
-              })
-              .eq("id_usuario", authData.user.id);
-
-            if (updateError) throw updateError;
-            if (idTipo === 2) {
-              const { error: solicitacaoError } = await supabase
-                .from("solicitacao_professor")
-                .insert({
-                  id_usuario: authData.user.id,
-                  justificativa: justificativa,
-                  status: "pendente",
-                });
-
-              if (solicitacaoError) throw solicitacaoError;
-
-              Utils.showMessageToast(
-                "success",
-                "Cadastro realizado!",
-                "Sua solicitação de professor foi enviada para análise. Você receberá um e-mail quando for aprovado.",
-                5000
-              );
-            } else {
-              Utils.showMessageToast(
-                "success",
-                "Cadastro realizado!",
-                "Sua conta foi criada com sucesso.",
-                3000
-              );
-            }
+            
+            // Show success message indicating email confirmation is required
+            Utils.showMessageToast(
+              "success",
+              "Cadastro realizado!",
+              "Enviamos um e-mail de confirmação. Por favor, verifique sua caixa de entrada e clique no link de confirmação antes de fazer login.",
+              7000
+            );
 
             setTimeout(() => {
               window.location.href = "login.html";
-            }, 1500);
+            }, 2000);
           } catch (error) {
             console.error("Erro no cadastro:", error);
             Utils.showMessageToast(

@@ -528,31 +528,32 @@
 
       async function getVersionApp() {
         try {
+          // This function is currently disabled - uncomment and configure when needed
           // const res = await fetch("https://sua-api.com/v1/versao-app");
-          const data = await res.json();
-          const serverVersion = data.version;
-          const localVersion =
-            localStorage.getItem("app_version") || BUILD_VERSION;
-
-          if (semverCompare(serverVersion, localVersion) > 0) {
-            Utils.showMessageToast(
-              "info",
-              "Atualização Disponível",
-              "Uma nova versão do app está disponível."
-            );
-
-            if (isNativeCapacitor()) {
-              const { Device, WebViewCache, ClearCache } = Capacitor.Plugins;
-              const { platform } = await Device.getInfo();
-              if (platform === "android") {
-                await WebViewCache.clearCache();
-              } else {
-                await ClearCache.clear();
-              }
-              localStorage.setItem("app_version", serverVersion);
-              window.location.reload();
-            }
-          }
+          // const data = await res.json();
+          // const serverVersion = data.version;
+          // const localVersion =
+          //   localStorage.getItem("app_version") || BUILD_VERSION;
+          //
+          // if (semverCompare(serverVersion, localVersion) > 0) {
+          //   Utils.showMessageToast(
+          //     "info",
+          //     "Atualização Disponível",
+          //     "Uma nova versão do app está disponível."
+          //   );
+          //
+          //   if (isNativeCapacitor()) {
+          //     const { Device, WebViewCache, ClearCache } = Capacitor.Plugins;
+          //     const { platform } = await Device.getInfo();
+          //     if (platform === "android") {
+          //       await WebViewCache.clearCache();
+          //     } else {
+          //       await ClearCache.clear();
+          //     }
+          //     localStorage.setItem("app_version", serverVersion);
+          //     window.location.reload();
+          //   }
+          // }
         } catch (err) {
           console.error("Erro ao obter versão:", err);
         }
@@ -583,6 +584,7 @@
         const recoveryForm = document.getElementById("recoveryForm");
 
         clearAuth();
+        
         togglePassword?.addEventListener("click", () => {
           const type = passwordInput.type === "password" ? "text" : "password";
           passwordInput.type = type;
@@ -740,16 +742,20 @@
             clearAuth();
             console.error(err);
             let userMsg = "Erro inesperado. Tente novamente.";
+            
             if (err.message.includes("aguardando aprovação")) {
-            userMsg = err.message;
-          } 
-          
-          else if (
+              userMsg = err.message;
+            } 
+            else if (err.message.includes("confirme seu e-mail")) {
+              userMsg = "Por favor, verifique seu email e clique no link de confirmação antes de fazer login.";
+            }
+            else if (
               err.message.includes("network") ||
               err.message.includes("fetch")
             ) {
               userMsg = "Falha de conexão. Verifique sua internet.";
             }
+            
             Utils.showMessageToast("error", "Falha no login", userMsg);
           } finally {
             btn.innerHTML =
