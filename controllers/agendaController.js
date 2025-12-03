@@ -86,8 +86,12 @@ const agendaController = {
       let status = "pendente";
 
       if (entrega) {
-        if (entrega.status === "AVALIADA" || entrega.status === "ENVIADA") {
+        // Show both "CONCLUIDA" and "AVALIADA" as completed tasks
+        if (entrega.status === "AVALIADA" || entrega.status === "CONCLUIDA") {
           status = "concluido";
+        } else if (entrega.status === "ENVIADA") {
+          // Keep "ENVIADA" as pending since it's not evaluated yet
+          status = "pendente";
         }
       } else if (new Date(t.data_entrega) < hoje) {
         status = "atrasada";
@@ -113,6 +117,16 @@ const agendaController = {
       const key = ev.data;
       if (!this.eventosPorDia[key]) this.eventosPorDia[key] = [];
 
+      // Determine status for events
+      let status = ev.status || "pendente";
+      
+      // Make sure to count pending events in stats
+      if (status === "pendente") {
+        this.stats.pendente++;
+      } else if (status === "concluido") {
+        this.stats.concluido++;
+      }
+
       this.eventosPorDia[key].push({
         tipo: "evento",
         id_evento: ev.id_evento,
@@ -120,7 +134,7 @@ const agendaController = {
         data: ev.data,
         hora: ev.hora,
         data_entrega: `${ev.data}T${ev.hora}`,
-        status: ev.status || "pendente",
+        status: status,
         id_disciplina: null,
       });
     });
@@ -269,6 +283,13 @@ const agendaController = {
             ? "text-red-600"
             : "text-purple-600";
 
+        const statusText =
+          e.status === "concluido"
+            ? "CONCLUÍDA"
+            : e.status === "atrasada"
+            ? "ATRASADA"
+            : "PENDENTE";
+
         return `
         <div class="agenda-event-card" onclick="window.router.navigate('/tarefas?disc=${
           e.id_disciplina
@@ -276,7 +297,7 @@ const agendaController = {
           <div class="agenda-event-header">
             <h4 class="agenda-event-title">${e.titulo}</h4>
             <span class="text-sm font-semibold ${statusColor}">
-              ${e.status.toUpperCase()}
+              ${statusText}
             </span>
           </div>
 
@@ -417,6 +438,7 @@ const agendaController = {
         await controller.carregarEventosDoAluno();
         controller.renderCalendar();
         controller.loadEventsForDate(controller.selectedDate);
+        controller.updateEventStats(); // Add this line to update stats after marking event as completed
 
         modal.remove();
       });
@@ -526,6 +548,7 @@ const agendaController = {
         await this.carregarEventosDoAluno();
         this.renderCalendar();
         this.loadEventsForDate(this.selectedDate);
+        this.updateEventStats(); // Add this line to update stats after creating new event
       });
   },
 
@@ -575,6 +598,7 @@ window.agenda_markDone = async (id_evento, marcar) => {
   await agendaController.carregarEventosDoAluno();
   agendaController.renderCalendar();
   agendaController.loadEventsForDate(agendaController.selectedDate);
+  agendaController.updateEventStats();
 };
 
 export default agendaController;
