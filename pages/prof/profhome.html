@@ -19,6 +19,21 @@
         font-family: "Inter", sans-serif;
         -webkit-tap-highlight-color: transparent;
       }
+      
+      .skeleton {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.5s infinite;
+      }
+      
+      @keyframes skeleton-loading {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
     </style>
   </head>
 
@@ -57,34 +72,24 @@
     </header>
 
     <main class="px-6 mt-6 space-y-6 pb-28">
+      <!-- Ações Rápidas Skeleton -->
       <div class="bg-white rounded-3xl p-6 shadow-sm">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-xl font-bold text-gray-900">Ações Rápidas</h3>
+          <div class="skeleton h-6 w-1/3 rounded"></div>
         </div>
         <div class="grid grid-cols-1 gap-3">
-          <a
-            href="/profdisciplinas"
-            data-navigo
-            class="bg-gradient-to-br from-purple-500 to-indigo-600 text-white rounded-2xl p-5 text-center font-bold text-lg hover:shadow-lg transition-all active:scale-95"
-          >
-            Ver Disciplinas
-          </a>
+          <div class="skeleton h-16 rounded-2xl"></div>
         </div>
       </div>
 
+      <!-- Estatísticas Skeleton -->
       <div class="bg-white rounded-3xl p-6 shadow-sm">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-xl font-bold text-gray-900">Estatísticas</h3>
+          <div class="skeleton h-6 w-1/3 rounded"></div>
         </div>
         <div class="grid grid-cols-2 gap-4">
-          <div class="bg-purple-50 rounded-2xl p-4">
-            <div class="text-purple-600 font-bold text-2xl">5</div>
-            <div class="text-gray-600 text-sm">Disciplinas</div>
-          </div>
-          <div class="bg-indigo-50 rounded-2xl p-4">
-            <div class="text-indigo-600 font-bold text-2xl">12</div>
-            <div class="text-gray-600 text-sm">Tarefas Criadas</div>
-          </div>
+          <div class="skeleton h-20 rounded-2xl"></div>
+          <div class="skeleton h-20 rounded-2xl"></div>
         </div>
       </div>
     </main>
