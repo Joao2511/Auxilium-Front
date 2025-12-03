@@ -10,13 +10,13 @@ export async function criarTarefa({
   const agora = new Date();
   const entrega = new Date(data_entrega);
   const diffHoras = (entrega - agora) / (1000 * 60 * 60);
-  
+
   // Base de 100 pontos + 10 pontos por hora.
   // Isso garante que tarefas curtas valham bastante (alta densidade),
   // mas tarefas longas valham mais no total.
   // Ex: 5h -> 150 pts (30/h). 24h -> 340 pts (14/h).
   let pontos_maximos = Math.round(100 + (diffHoras * 10));
-  
+
   // Limitar entre 100 e 1000
   pontos_maximos = Math.max(100, Math.min(pontos_maximos, 1000));
 
@@ -73,6 +73,39 @@ export async function listarEntregasDaTarefa(id_tarefa) {
   return data || [];
 }
 
+function calcularPontuacao({
+  dataCriacao,
+  dataEntrega,
+  dataSubmissao,
+  pontosMaximos
+}) {
+  const criacao = new Date(dataCriacao);
+  const entrega = new Date(dataEntrega);
+  const submissao = new Date(dataSubmissao);
+
+  const tempoTotal = entrega - criacao;     // total do prazo
+  const tempoRestante = entrega - submissao; // quanto faltava ao entregar
+
+  let progresso = tempoTotal !== 0 ? tempoRestante / tempoTotal : 0;
+
+
+  // ATRASO
+  if (progresso < 0) {
+    const horasAtraso = Math.abs(tempoRestante) / (1000 * 60 * 60);
+    return Math.max(
+      5,
+      Math.round(pontosMaximos * Math.exp(-0.4 * horasAtraso))
+    );
+  }
+
+  // ENTREGA ANTECIPADA
+  progresso = Math.min(Math.max(progresso, 0), 1);
+  const curva = Math.pow(progresso, 0.6);
+  const pontos = (0.5 + 0.5 * curva) * pontosMaximos;
+
+  return Math.round(pontos);
+}
+
 export async function avaliarEntrega({ id_entrega, nota_valor, observacoes }) {
   const { data: userData, error: authError } = await supabase.auth.getUser();
   if (authError) throw authError;
@@ -107,15 +140,33 @@ export async function avaliarEntrega({ id_entrega, nota_valor, observacoes }) {
     if (errIns) throw errIns;
   }
 
+  const { data: dadosEntrega } = await supabase
+    .from("entrega_tarefa")
+    .select(`
+    data_submissao,
+    tarefa:id_tarefa ( data_cadastro, data_entrega, pontos_maximos )
+
+  `)
+    .eq("id_entrega", id_entrega)
+    .single();
+
+  const pontosCalculados = calcularPontuacao({
+    dataCriacao: dadosEntrega.tarefa.data_cadastro,
+    dataEntrega: dadosEntrega.tarefa.data_entrega,
+    dataSubmissao: dadosEntrega.data_submissao || new Date(),
+    pontosMaximos: dadosEntrega.tarefa.pontos_maximos
+  });
+
+  // Atualizar a entrega com a nota calculada
   const { error: errEntrega } = await supabase
     .from("entrega_tarefa")
     .update({
       status: "AVALIADA",
-      nota_calculada: nota_valor,
+      nota_calculada: pontosCalculados,
     })
     .eq("id_entrega", id_entrega);
 
-  if (errEntrega) throw errEntrega;
+    if (errEntrega) throw errEntrega;
 
   return true;
 }
