@@ -124,6 +124,29 @@ export default {
     const newBtnEnviar = btnEnviar.cloneNode(true);
     btnEnviar.parentNode.replaceChild(newBtnEnviar, btnEnviar);
 
+    // Add event listener for file input to display selected file
+    const arquivoInput = document.getElementById("arquivoInput");
+    const selectedFiles = document.getElementById("selectedFiles");
+    
+    arquivoInput?.addEventListener("change", function() {
+      if (this.files.length > 0) {
+        const fileNames = Array.from(this.files).map(file => file.name).join(", ");
+        selectedFiles.innerHTML = `
+          <div class="mt-3 p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
+            <div class="flex items-center space-x-2">
+              <i class="fa-solid fa-file-circle-check text-green-500"></i>
+              <div>
+                <p class="font-medium text-gray-900 text-sm">Arquivo selecionado:</p>
+                <p class="text-gray-600 text-xs truncate">${fileNames}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        selectedFiles.innerHTML = "";
+      }
+    });
+
     newBtnEnviar.addEventListener("click", async () => {
       const file = document.getElementById("arquivoInput").files[0];
       if (!file) {
