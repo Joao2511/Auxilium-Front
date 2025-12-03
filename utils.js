@@ -21,7 +21,7 @@ class Utils {
         </div>
         <div class="ml-3 flex-1">
           <p class="text-sm font-bold">${title}</p>
-          <p class="text-xs opacity-90 mt-1">${message}</p>
+          <p class="text-xs mt-1">${message}</p>
         </div>
         <button class="ml-4 flex-shrink-0 opacity-70 hover:opacity-100 transition-opacity">
           <i class="fas fa-times"></i>
@@ -71,6 +71,8 @@ class Utils {
       const modalContent = document.createElement("div");
       modalContent.id = "modal-content";
       modalContent.className = "bg-white rounded-t-2xl shadow-lg w-full animate-slide-up transform transition-all duration-300 ease-out";
+      // Add high z-index to ensure it appears on top of other modals
+      modalContent.style.zIndex = "9999";
       modalContent.innerHTML = `
         <div class="w-full flex justify-center mt-2">
           <div class="h-1.5 w-12 bg-gray-300 rounded-full"></div>

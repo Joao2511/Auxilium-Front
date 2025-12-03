@@ -21,8 +21,9 @@ body {
 }
 
 #confirm-atendimento-modal {
-  z-index: 10000;
+  z-index: 6000; /* suficientemente alto para sobrepor outros modais */
 }
+
 .status-dados-faltantes {
   background: #fffbeb;
   border: 1px solid #fef3c7;
@@ -33,4 +34,10 @@ body {
 
 .modal-open {
   overflow: hidden;
+}
+
+.modal-overlay {
+  position: fixed !important;
+  z-index: 2147483647 !important; /* valor máximo */
+  inset: 0;
 }

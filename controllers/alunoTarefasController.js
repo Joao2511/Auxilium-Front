@@ -159,7 +159,7 @@ export default {
           // A nota_calculada é apenas para ranking e não deve ser exibida aqui
           const nota = entrega.nota?.[0]?.nota_valor;
           const temNota = nota !== undefined && nota !== null;
-          
+
           return `
         <div class="bg-gray-50 border border-gray-200 rounded-2xl p-4 flex justify-between items-center opacity-75 hover:opacity-100 transition-all">
           <div>
@@ -234,8 +234,8 @@ export default {
       }
 
       const modal = document.createElement("div");
-      modal.className =
-        "fixed inset-0 bg-black/50 flex items-center justify-center z-50 modal-overlay";
+      modal.className = "fixed inset-0 bg-black/50 flex items-center justify-center z-[3000] modal-overlay";
+
       modal.style.opacity = "0";
       modal.style.transition = "opacity 0.3s ease";
 
@@ -255,9 +255,8 @@ export default {
         <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 sm:px-8 py-6 sm:py-8">
           <div class="flex items-start justify-between mb-3 pl-12">
             <div class="flex-1 min-w-0">
-              <h2 class="text-xl sm:text-2xl font-bold mb-2 pr-2 break-words">${
-                tarefa.titulo
-              }</h2>
+              <h2 class="text-xl sm:text-2xl font-bold mb-2 pr-2 break-words">${tarefa.titulo
+        }</h2>
               <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm opacity-90">
                 <div class="flex items-center space-x-1">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
@@ -267,8 +266,8 @@ export default {
                     <line x1="3" y1="10" x2="21" y2="10"/>
                   </svg>
                   <span>${new Date(
-                    tarefa.data_entrega
-                  ).toLocaleDateString()}</span>
+          tarefa.data_entrega
+        ).toLocaleDateString()}</span>
                 </div>
                 <div class="flex items-center space-x-1">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
@@ -276,18 +275,17 @@ export default {
                     <polyline points="12 6 12 12 16 14"/>
                   </svg>
                   <span>${new Date(tarefa.data_entrega).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}</span>
+          hour: "2-digit",
+          minute: "2-digit",
+        })}</span>
                 </div>
               </div>
             </div>
             <div class="flex-shrink-0">
               <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/30">
                 <div class="text-center">
-                  <div class="text-xl sm:text-2xl font-bold">${
-                    tarefa.pontos_maximos
-                  }</div>
+                  <div class="text-xl sm:text-2xl font-bold">${tarefa.pontos_maximos
+        }</div>
                   <div class="text-xs opacity-90">pontos</div>
                 </div>
               </div>
@@ -310,9 +308,8 @@ export default {
               </svg>
               <span>Descrição da Tarefa</span>
             </h3>
-            <p class="text-gray-700 leading-relaxed">${
-              tarefa.descricao || "Sem descrição fornecida."
-            }</p>
+            <p class="text-gray-700 leading-relaxed">${tarefa.descricao || "Sem descrição fornecida."
+        }</p>
           </div>
 
           <!-- Previous Submissions -->
@@ -397,12 +394,11 @@ export default {
         if (files.length > 0) {
           selectedFilesDiv.innerHTML = `
             <div class="bg-white rounded-lg p-3 space-y-2">
-              <p class="font-semibold text-purple-600 text-xs mb-2">${
-                files.length
-              } arquivo(s) selecionado(s):</p>
+              <p class="font-semibold text-purple-600 text-xs mb-2">${files.length
+            } arquivo(s) selecionado(s):</p>
               ${Array.from(files)
-                .map(
-                  (f) => `
+              .map(
+                (f) => `
                 <div class="flex items-center space-x-2 text-xs">
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-500">
                     <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
@@ -410,12 +406,12 @@ export default {
                   </svg>
                   <span class="flex-1 truncate">${f.name}</span>
                   <span class="text-gray-500">${(f.size / 1024 / 1024).toFixed(
-                    2
-                  )} MB</span>
+                  2
+                )} MB</span>
                 </div>
               `
-                )
-                .join("")}
+              )
+              .join("")}
             </div>
           `;
         } else {
@@ -461,8 +457,8 @@ export default {
                   <polyline points="13 2 13 9 20 9"/>
                 </svg>
                 <span class="font-semibold text-gray-900 truncate">${e.caminho_arquivo
-                  .split("/")
-                  .pop()}</span>
+                .split("/")
+                .pop()}</span>
               </div>
               <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-600">
                 <div class="flex items-center space-x-1">
@@ -473,8 +469,8 @@ export default {
                     <line x1="3" y1="10" x2="21" y2="10"/>
                   </svg>
                   <span>${new Date(
-                    e.data_submissao
-                  ).toLocaleDateString()}</span>
+                  e.data_submissao
+                ).toLocaleDateString()}</span>
                 </div>
                 <div class="flex items-center space-x-1">
                   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -482,24 +478,22 @@ export default {
                     <polyline points="12 6 12 12 16 14"/>
                   </svg>
                   <span>${new Date(e.data_submissao).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}</span>
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}</span>
                 </div>
               </div>
             </div>
             <div class="flex-shrink-0">
-              ${
-                e.nota?.[0]?.nota_valor !== undefined ||
+              ${e.nota?.[0]?.nota_valor !== undefined ||
                 e.nota_calculada !== undefined
-                  ? `
+                ? `
                 <div class="w-12 h-12 bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl flex items-center justify-center">
-                  <span class="text-lg font-bold text-green-700">${
-                    e.nota?.[0]?.nota_valor ?? e.nota_calculada
-                  }</span>
+                  <span class="text-lg font-bold text-green-700">${e.nota?.[0]?.nota_valor ?? e.nota_calculada
+                }</span>
                 </div>
               `
-                  : `
+                : `
                 <span class="inline-flex items-center bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">
                   ${e.status || "Enviado"}
                 </span>
@@ -507,16 +501,15 @@ export default {
               }
             </div>
           </div>
-          ${
-            e.nota?.[0]?.observacoes
-              ? `
+          ${e.nota?.[0]?.observacoes
+                ? `
             <div class="mt-3 bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
               <p class="text-xs font-semibold text-yellow-800 mb-1">Observações do Professor:</p>
               <p class="text-xs text-yellow-700">${e.nota[0].observacoes}</p>
             </div>
           `
-              : ""
-          }
+                : ""
+              }
         </div>`
           )
           .join("");
@@ -535,106 +528,116 @@ export default {
         `;
       }
 
-    // Remove the original event listener and attach a new one to avoid duplication
-    const newBtnEnviar = btnEnviar.cloneNode(true);
-    btnEnviar.parentNode.replaceChild(newBtnEnviar, btnEnviar);
+      // Remove the original event listener and attach a new one to avoid duplication
+      const newBtnEnviar = btnEnviar.cloneNode(true);
+      btnEnviar.parentNode.replaceChild(newBtnEnviar, btnEnviar);
 
-    newBtnEnviar.addEventListener("click", async () => {
-      const files = modal.querySelector("#arquivoInput").files;
-      if (!files.length) {
-        Utils.showMessageToast(
-          "warning",
-          "Nenhum arquivo selecionado",
-          "Por favor, selecione pelo menos um arquivo para enviar.",
-          3000
-        );
-        return;
-      }
-
-      for (const file of files) {
-        if (file.size > 20 * 1024 * 1024) {
+      newBtnEnviar.addEventListener("click", async () => {
+        const files = modal.querySelector("#arquivoInput").files;
+        if (!files.length) {
           Utils.showMessageToast(
             "warning",
-            "Arquivo muito grande",
-            `O arquivo ${file.name} ultrapassa 20 MB!`,
+            "Nenhum arquivo selecionado",
+            "Por favor, selecione pelo menos um arquivo para enviar.",
             3000
           );
-          continue;
+          return;
         }
 
-        const path = `${id_aluno}/${id_tarefa}/${file.name}`;
+        // Use the confirmation modal before sending
+        const confirmed = await Utils.showConfirmationModal(
+          "Enviar tarefa?",
+          `Deseja realmente enviar ${files.length} arquivo(s) para esta tarefa?\n\nEsta ação não pode ser desfeita.`,
+          "Enviar tarefa",
+          "Cancelar"
+        );
 
-        const { error: uploadError } = await supabase.storage
-          .from("entregas")
-          .upload(path, file, { upsert: true });
+        if (!confirmed) return;
 
-        if (uploadError) {
-          console.error(uploadError);
-          Utils.showMessageToast(
-            "error",
-            "Erro ao enviar arquivo",
-            `Não foi possível enviar o arquivo ${file.name}. Tente novamente.`,
-            5000
-          );
-          continue;
-        }
-
-        // Calcular pontos de GAMIFICAÇÃO (Ranking)
-        // Isso NÃO é a nota da tarefa.
-        const agora = new Date();
-        const dataEntrega = new Date(tarefa.data_entrega);
-        const dataCadastro = new Date(tarefa.data_cadastro);
-        const pontosMaximosRanking = tarefa.pontos_maximos;
-        
-        let pontosGanhosRanking = 0;
-
-        if (agora > dataEntrega) {
-          // Entrega atrasada: 20% dos pontos
-          pontosGanhosRanking = Math.round(pontosMaximosRanking * 0.2);
-        } else {
-          // Entrega no prazo: Decaimento linear
-          const duracaoTotal = dataEntrega.getTime() - dataCadastro.getTime();
-          const tempoRestante = dataEntrega.getTime() - agora.getTime();
-          
-          if (duracaoTotal <= 0) {
-            pontosGanhosRanking = pontosMaximosRanking;
-          } else {
-            const fator = 0.5 + (0.5 * (tempoRestante / duracaoTotal));
-            pontosGanhosRanking = Math.round(pontosMaximosRanking * fator);
+        for (const file of files) {
+          if (file.size > 20 * 1024 * 1024) {
+            Utils.showMessageToast(
+              "warning",
+              "Arquivo muito grande",
+              `O arquivo ${file.name} ultrapassa 20 MB!`,
+              3000
+            );
+            continue;
           }
+
+          const path = `${id_aluno}/${id_tarefa}/${file.name}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from("entregas")
+            .upload(path, file, { upsert: true });
+
+          if (uploadError) {
+            console.error(uploadError);
+            Utils.showMessageToast(
+              "error",
+              "Erro ao enviar arquivo",
+              `Não foi possível enviar o arquivo ${file.name}. Tente novamente.`,
+              5000
+            );
+            continue;
+          }
+
+          // Calcular pontos de GAMIFICAÇÃO (Ranking)
+          // Isso NÃO é a nota da tarefa.
+          const agora = new Date();
+          const dataEntrega = new Date(tarefa.data_entrega);
+          const dataCadastro = new Date(tarefa.data_cadastro);
+          const pontosMaximosRanking = tarefa.pontos_maximos;
+
+          let pontosGanhosRanking = 0;
+
+          if (agora > dataEntrega) {
+            // Entrega atrasada: 20% dos pontos
+            pontosGanhosRanking = Math.round(pontosMaximosRanking * 0.2);
+          } else {
+            // Entrega no prazo: Decaimento linear
+            const duracaoTotal = dataEntrega.getTime() - dataCadastro.getTime();
+            const tempoRestante = dataEntrega.getTime() - agora.getTime();
+
+            if (duracaoTotal <= 0) {
+              pontosGanhosRanking = pontosMaximosRanking;
+            } else {
+              const fator = 0.5 + (0.5 * (tempoRestante / duracaoTotal));
+              pontosGanhosRanking = Math.round(pontosMaximosRanking * fator);
+            }
+          }
+
+          // Garantir limites
+          pontosGanhosRanking = Math.max(0, Math.min(pontosGanhosRanking, pontosMaximosRanking));
+
+          // Salvar entrega (sem definir nota ainda, pois o professor que avalia)
+          await supabase.from("entrega_tarefa").insert({
+            id_tarefa,
+            id_aluno,
+            caminho_arquivo: path,
+            status: "ENVIADA"
+          });
+
+          // Adicionar pontos de RANKING ao usuário
+          await supabase.rpc("adicionar_pontos", {
+            user_id: id_aluno,
+            pontos: pontosGanhosRanking,
+          });
         }
 
-        // Garantir limites
-        pontosGanhosRanking = Math.max(0, Math.min(pontosGanhosRanking, pontosMaximosRanking));
+        Utils.showMessageToast(
+          "success",
+          "Arquivos enviados!",
+          "Seus arquivos foram enviados com sucesso.",
+          3000
+        );
+        modal.remove();
+        document.body.classList.remove("modal-open");
+        // Redirect to disciplines screen
+        router.navigate("/disciplinas");
+      });
 
-        // Salvar entrega (sem definir nota ainda, pois o professor que avalia)
-        await supabase.from("entrega_tarefa").insert({
-          id_tarefa,
-          id_aluno,
-          caminho_arquivo: path,
-          status: "ENVIADA"
-        });
-
-        // Adicionar pontos de RANKING ao usuário
-        await supabase.rpc("adicionar_pontos", {
-          user_id: id_aluno,
-          pontos: pontosGanhosRanking,
-        });
-      }
-
-      Utils.showMessageToast(
-        "success",
-        "Arquivos enviados!",
-        "Seus arquivos foram enviados com sucesso.",
-        3000
-      );
-      modal.remove();
-      document.body.classList.remove("modal-open");
-      // Redirect to disciplines screen
-      router.navigate("/disciplinas");
-    });
-
-    btnFechar.addEventListener("click", () => {
+      btnFechar.addEventListener("click", () => {
         const wrapper = modal.querySelector(".modal-content-wrapper");
         modal.style.opacity = "0";
         wrapper.style.transform = "scale(0.7)";

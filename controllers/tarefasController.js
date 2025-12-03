@@ -258,6 +258,16 @@ export default {
           if (!file) return;
           const taskId = parseInt(e.target.dataset.taskId);
 
+          // Use the confirmation modal before sending
+          const confirmed = await Utils.showConfirmationModal(
+            "Enviar tarefa?",
+            `Deseja realmente enviar o arquivo "${file.name}" para esta tarefa?\n\nEsta ação não pode ser desfeita.`,
+            "Enviar tarefa",
+            "Cancelar"
+          );
+
+          if (!confirmed) return;
+
           try {
             const filePath = `${session.user.id}/${taskId}/${file.name}`;
             const { error: uploadError } = await supabase.storage
@@ -312,6 +322,16 @@ export default {
         
         newBtn.addEventListener("click", async (e) => {
           const taskId = parseInt(e.currentTarget.dataset.taskId);
+
+          // Use the confirmation modal before marking as complete
+          const confirmed = await Utils.showConfirmationModal(
+            "Concluir tarefa?",
+            "Deseja realmente marcar esta tarefa como concluída?\n\nEsta ação não pode ser desfeita.",
+            "Concluir tarefa",
+            "Cancelar"
+          );
+
+          if (!confirmed) return;
 
           try {
             const { error: insertError } = await supabase

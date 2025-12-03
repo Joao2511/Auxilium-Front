@@ -136,6 +136,16 @@ export default {
         return;
       }
 
+      // Use the confirmation modal before sending
+      const confirmed = await Utils.showConfirmationModal(
+        "Enviar tarefa?",
+        `Deseja realmente enviar o arquivo "${file.name}" para esta tarefa?\n\nEsta ação não pode ser desfeita.`,
+        "Enviar tarefa",
+        "Cancelar"
+      );
+
+      if (!confirmed) return;
+
       const path = `${id_aluno}/${id_tarefa}/${file.name}`;
       const { error: uploadError } = await supabase.storage
         .from("entregas")
