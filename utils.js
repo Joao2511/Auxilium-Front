@@ -12,6 +12,7 @@ class Utils {
       success: '<i class="fas fa-check-circle mr-2"></i>',
       error: '<i class="fas fa-exclamation-circle mr-2"></i>',
       warning: '<i class="fas fa-exclamation-triangle mr-2"></i>',
+      info: '<i class="fas fa-info-circle mr-2"></i>',
     };
 
     toast.innerHTML = `
