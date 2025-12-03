@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redefinir Senha - Auxilium</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="https://unpkg.com/@capacitor/core@latest/dist/capacitor.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: "#f0f9ff",
+              100: "#e0f2fe",
+              200: "#bae6fd",
+              300: "#7dd3fc",
+              400: "#38bdf8",
+              500: "#0ea5e9",
+              600: "#0284c7",
+              700: "#0369a1",
+              800: "#075985",
+              900: "#0c4a6e",
+            },
+          },
+          fontFamily: { sans: ["Inter", "sans-serif"] },
+        },
+      },
+    };
+  </script>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+    body {
+      font-family: "Inter", sans-serif;
+      background-color: #3F0B4D;
+      color: #1e293b;
+      transition: all 0.3s ease;
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("../assets/images/Star.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: 0;
+    }
+    .input-field {
+      transition: all 0.3s ease;
+      background-color: #f8fafc;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+
+    .logo {
+      height: 35px;
+      transition: all 0.3s ease;
+    }
+
+    .input-clean {
+      background-color: #f8fafc;
+      border-color: #e5e7eb;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+    .input-icon {
+      color: #E83291;
+    }
+
+    #toastContainer {
+      pointer-events: none;
+    }
+    #toastContainer > * {
+      pointer-events: auto;
+    }
+  </style>
+</head>
+
+<body class="flex items-center justify-center p-4">
+  <main class="min-h-screen flex flex-col justify-center items-center px-4 py-6 max-w-md mx-auto w-full relative" style="z-index: 1;">
+    <div class="flex justify-center mb-8">
+      <img id="logo-clara" class="logo" src="../assets/images/logos/Logo.png" alt="Logo Auxilium" />
+    </div>
+
+    <div class="w-full max-w-sm animate-fade-in" id="resetPasswordForm">
+      <div class="flex flex-col items-center">
+        <h1 class="text-3xl text-center text-white leading-5 font-bold">
+          Redefinir sua senha
+        </h1>
+        <p class="text-center text-white opacity-90 mt-2 text-sm">
+          Digite sua nova senha abaixo
+        </p>
+      </div>
+
+      <form id="reset-password-form" class="mt-8" autocomplete="off" novalidate>
+        <div class="mb-4">
+          <label for="new-password" class="sr-only">Nova Senha</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-lock input-icon"></i>
+            </span>
+            <input
+              type="password"
+              id="new-password"
+              name="new-password"
+              autocomplete="new-password"
+              placeholder="Nova senha"
+              class="input-field input-clean h-12 pl-10 w-full px-4 rounded-tr-lg rounded-tl-lg border focus:outline-none font-bold"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <label for="confirm-password" class="sr-only">Confirmar Senha</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-lock input-icon"></i>
+            </span>
+            <input
+              type="password"
+              id="confirm-password"
+              name="confirm-password"
+              autocomplete="new-password"
+              placeholder="Confirmar senha"
+              class="input-field input-clean h-12 pl-10 w-full px-4 rounded-bl-lg rounded-br-lg border focus:outline-none font-bold"
+              required
+            />
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          id="btn-reset-password"
+          class="w-full h-14 flex justify-center items-center rounded-lg text-white font-medium shadow-sm transition-all active:scale-[.99] bg-gradient-to-b from-[#E83593] to-[#E51B85]"
+        >
+          <i class="fas fa-key mr-2 text-[14px]"></i>
+          Redefinir Senha
+        </button>
+        
+        <div class="text-center mt-4">
+          <a
+            href="../login.html"
+            class="text-sm text-white hover:text-white/80 font-semibold underline"
+          >
+            Voltar para o login
+          </a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <div id="toastContainer" class="fixed bottom-6 left-0 right-0 z-[3000] flex justify-center px-4 pointer-events-none"></div>
+
+  <script type="module">
+    import Utils from "../utils.js";
+    import ResetPasswordController from "../controllers/resetPasswordController.js";
+
+    document.addEventListener("DOMContentLoaded", async function () {
+      const resetPasswordForm = document.getElementById("reset-password-form");
+      const newPasswordInput = document.getElementById("new-password");
+      const confirmPasswordInput = document.getElementById("confirm-password");
+
+      // Get the access token from URL hash parameters
+      const urlParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = urlParams.get('access_token');
+      
+      // If no access token, show error and redirect
+      if (!accessToken) {
+        Utils.showMessageToast(
+          "error",
+          "Link inválido",
+          "Este link de redefinição de senha expirou ou é inválido."
+        );
+        setTimeout(() => {
+          window.location.href = "../login.html";
+        }, 3000);
+        return;
+      }
+
+      // Don't manually set the session - Supabase handles this automatically
+      // Just give it a moment to establish the session
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      resetPasswordForm?.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const newPassword = newPasswordInput.value.trim();
+        const confirmPassword = confirmPasswordInput.value.trim();
+
+        if (!newPassword || !confirmPassword) {
+          Utils.showMessageToast(
+            "warning",
+            "Campos vazios",
+            "Por favor, preencha todos os campos."
+          );
+          return;
+        }
+
+        if (newPassword !== confirmPassword) {
+          Utils.showMessageToast(
+            "warning",
+            "Senhas não coincidem",
+            "As senhas digitadas não são iguais."
+          );
+          return;
+        }
+
+        if (newPassword.length < 6) {
+          Utils.showMessageToast(
+            "warning",
+            "Senha fraca",
+            "A senha deve ter pelo menos 6 caracteres."
+          );
+          return;
+        }
+
+        const btn = this.querySelector('button[type="submit"]');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Redefinindo...';
+        btn.disabled = true;
+
+        try {
+          const { error } = await ResetPasswordController.updatePassword(newPassword);
+
+          if (error) {
+            // Handle specific error cases
+            if (error.message.includes('expirou') || error.message.includes('Auth session missing')) {
+              Utils.showMessageToast(
+                "error",
+                "Link expirado",
+                "O link de redefinição de senha expirou. Por favor, solicite um novo link na página de login."
+              );
+              // Redirect to login after showing the error
+              setTimeout(() => {
+                window.location.href = "../login.html";
+              }, 3000);
+              return;
+            }
+            throw new Error(error.message);
+          }
+
+          Utils.showMessageToast(
+            "success",
+            "Senha redefinida!",
+            "Sua senha foi atualizada com sucesso. Você será redirecionado para o login."
+          );
+
+          // Redirect to login page after a short delay
+          setTimeout(() => {
+            window.location.href = "../login.html";
+          }, 2000);
+        } catch (err) {
+          console.error(err);
+          Utils.showMessageToast(
+            "error",
+            "Erro",
+            "Não foi possível redefinir a senha. Tente novamente ou solicite um novo link."
+          );
+        } finally {
+          btn.innerHTML = '<i class="fas fa-key mr-2 text-[14px]"></i> Redefinir Senha';
+          btn.disabled = false;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

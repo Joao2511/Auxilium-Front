@@ -77,69 +77,6 @@
         animation: fadeIn 0.3s ease-out forwards;
       }
 
-      .popup-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 100;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
-      }
-      .popup-overlay.active {
-        opacity: 1;
-        pointer-events: all;
-      }
-      .popup-content {
-        background-color: white;
-        border-radius: 0.5rem;
-        width: 90%;
-        max-width: 400px;
-        transform: translateY(20px);
-        transition: transform 0.3s ease;
-        max-height: 80vh;
-        overflow-y: auto;
-      }
-      .popup-overlay.active .popup-content {
-        transform: translateY(0);
-      }
-      .recovery-screen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #3F0B4D;
-        z-index: 1000;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 2rem;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
-      }
-      .recovery-screen.active {
-        opacity: 1;
-        pointer-events: all;
-      }
-      .recovery-screen .recovery-content {
-        transform: scale(0.7);
-        opacity: 0;
-        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      }
-      .recovery-screen.active .recovery-content {
-        transform: scale(1);
-        opacity: 1;
-      }
-
       .logo {
         height: 35px;
         transition: all 0.3s ease;
@@ -248,6 +185,37 @@
       }
       #toastContainer > * {
         pointer-events: auto;
+      }
+      
+      .recovery-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #3F0B4D;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .recovery-screen.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+      .recovery-screen .recovery-content {
+        transform: scale(0.7);
+        opacity: 0;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .recovery-screen.active .recovery-content {
+        transform: scale(1);
+        opacity: 1;
       }
     </style>
   </head>
@@ -366,6 +334,7 @@
       <div id="offlineModal" class="fixed inset-0 z-50 hidden"></div>
     </main>
 
+    <!-- Recovery Screen Modal -->
     <div class="recovery-screen" id="recoveryScreen">
       <button class="close-btn" id="closeRecoveryScreen">
         <i class="fas fa-times"></i>
@@ -413,6 +382,7 @@
             <button
               type="submit"
               class="w-full h-14 flex justify-center items-center rounded-lg text-white font-medium shadow-sm transition-all active:scale-[.99] bg-gradient-to-b from-[#E83593] to-[#E51B85] mb-4"
+              id="btn-send-recovery"
             >
               <i class="fas fa-paper-plane mr-2 text-[14px]"></i>
               Enviar instruções
@@ -606,12 +576,9 @@
         const loginForm = document.getElementById("login-form");
         const togglePassword = document.getElementById("togglePassword");
         const passwordInput = document.getElementById("login-password");
-        const forgotPasswordLink =
-          document.getElementById("forgotPasswordLink");
+        const forgotPasswordLink = document.getElementById("forgotPasswordLink");
         const recoveryScreen = document.getElementById("recoveryScreen");
-        const closeRecoveryScreen = document.getElementById(
-          "closeRecoveryScreen"
-        );
+        const closeRecoveryScreen = document.getElementById("closeRecoveryScreen");
         const backToLogin = document.getElementById("backToLogin");
         const recoveryForm = document.getElementById("recoveryForm");
 
@@ -624,6 +591,7 @@
               ? '<i class="fas fa-eye"></i>'
               : '<i class="fas fa-eye-slash"></i>';
         });
+        
         const showRecovery = (e) => {
           e.preventDefault();
           recoveryScreen.classList.add("active");
@@ -648,21 +616,40 @@
             return;
           }
 
-          const { error } = await loginModel.resetarSenha(email);
+          const btn = document.getElementById("btn-send-recovery");
+          btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Enviando...';
+          btn.disabled = true;
 
-          if (error) {
+          try {
+            const { error } = await loginModel.resetarSenha(email);
+
+            if (error) {
+              Utils.showMessageToast(
+                "error",
+                "Erro",
+                "Não foi possível enviar o email de recuperação. Tente novamente."
+              );
+            } else {
+              Utils.showMessageToast(
+                "success",
+                "Verifique seu email",
+                "Se a conta existir, enviamos um link de recuperação."
+              );
+              // Clear the form
+              document.getElementById("recoveryEmail").value = "";
+            }
+          } catch (err) {
+            console.error(err);
             Utils.showMessageToast(
               "error",
               "Erro",
-              "Não foi possível enviar o email de recuperação."
+              "Ocorreu um erro inesperado. Tente novamente."
             );
-          } else {
-            Utils.showMessageToast(
-              "success",
-              "Verifique seu email",
-              "Se a conta existir, enviamos um link de recuperação."
-            );
+          } finally {
+            btn.innerHTML = '<i class="fas fa-paper-plane mr-2 text-[14px]"></i> Enviar instruções';
+            btn.disabled = false;
           }
+          
           hideRecovery(e);
         });
 

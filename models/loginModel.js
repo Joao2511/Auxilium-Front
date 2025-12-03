@@ -48,8 +48,12 @@ export async function fazerLogin(email, senha) {
  * @returns {Promise<{error: object}>}
  */
 export async function resetarSenha(email) {
+  // Ensure we're using the correct protocol and removing any trailing slashes
+  const baseUrl = window.location.origin.replace(/\/$/, '');
+  const redirectUrl = `${baseUrl}/pages/nova-senha.html`;
+  
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + "/pages/nova-senha.html",
+    redirectTo: redirectUrl,
   });
   return { error };
 }
