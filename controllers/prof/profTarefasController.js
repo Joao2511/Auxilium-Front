@@ -63,21 +63,8 @@ export default {
       return;
     }
 
-    const alunosBox = document.getElementById("alunos");
     const lista = document.getElementById("listaTarefas");
     const btn = document.getElementById("btnNovaTarefa");
-
-    async function pintarAlunos() {
-      try {
-        const alunos = await listarAlunosDaDisciplina(id_disciplina);
-        alunosBox.textContent = alunos.length
-          ? alunos.map((a) => a.nome).join(", ")
-          : "Nenhum aluno ainda.";
-      } catch (error) {
-        console.error("Erro ao carregar alunos:", error);
-        alunosBox.innerHTML = `<span class="text-red-500">Erro ao carregar alunos: ${error.message}</span>`;
-      }
-    }
 
     // Setup navigation buttons
     const btnPedidosPendentes = document.getElementById("btnPedidosPendentes");
@@ -285,7 +272,6 @@ export default {
       }
     });
 
-    await pintarAlunos();
     await pintarTarefas();
   },
 };

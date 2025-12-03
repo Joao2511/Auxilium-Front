@@ -17,6 +17,21 @@
             font-family: 'Inter', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
+        
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+        
+        @keyframes skeleton-loading {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
     </style>
 </head>
 
@@ -61,13 +76,6 @@
                     <span>Lista de Alunos</span>
                 </a>
             </div>
-        </div>
-
-        <div class="bg-white rounded-3xl p-6 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-xl font-bold text-gray-900">Alunos matriculados</h3>
-            </div>
-            <div id="alunos" class="text-sm text-gray-600">Carregando…</div>
         </div>
 
         <div class="bg-white rounded-3xl p-6 shadow-sm">
