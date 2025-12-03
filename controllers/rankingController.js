@@ -89,20 +89,7 @@ const rankingController = {
               try {
                 const newVisibility = await toggleUserVisibility(userId, currentVisibility);
                 
-                // Update button appearance
-                toggleButton.classList.toggle('bg-purple-300', newVisibility);
-                toggleButton.classList.toggle('bg-gray-400', !newVisibility);
-                const toggleSpan = toggleButton.querySelector('span');
-                if (toggleSpan) {
-                  toggleSpan.classList.toggle('translate-x-6', newVisibility);
-                  toggleSpan.classList.toggle('translate-x-1', !newVisibility);
-                }
-                
-                // Refresh the rankings display
-                const updatedRankings = await fetchUserRankings();
-                updateRankingDisplay(updatedRankings, userId);
-                
-                // Show success message
+                // Show success message before reloading
                 const message = newVisibility 
                   ? "Seu nome agora está visível no ranking!" 
                   : "Seu nome agora está oculto no ranking!";
@@ -119,15 +106,10 @@ const rankingController = {
                   toast.style.opacity = '1';
                 }, 10);
                 
-                // Remove after 3 seconds
+                // Reload the page after a short delay to show the message
                 setTimeout(() => {
-                  toast.style.opacity = '0';
-                  setTimeout(() => {
-                    if (toast.parentNode) {
-                      toast.parentNode.removeChild(toast);
-                    }
-                  }, 300);
-                }, 3000);
+                  window.location.reload();
+                }, 1500);
               } catch (error) {
                 console.error('Error toggling visibility:', error);
                 // Show error message

@@ -92,10 +92,10 @@ function updatePodiumDisplay(topUsers, currentUserId) {
       const pointsElement = document.getElementById(pointsElementId);
       
       if (nameElement) {
-        // Check if user has visibility enabled or if it's the current user
-        const isCurrentUser = user.id_usuario === currentUserId;
+        // Check if user has visibility enabled
         const isVisible = user.visibilidade_ranking !== false; // Default to true if undefined
-        const displayName = (isVisible || isCurrentUser) ? (user.nome_completo || 'Usuário') : 'Aluno Misterioso';
+        // When visibility is disabled, even the current user sees "Aluno Misterioso"
+        const displayName = isVisible ? (user.nome_completo || 'Usuário') : 'Aluno Misterioso';
         nameElement.textContent = displayName;
       }
       
@@ -128,9 +128,9 @@ function updateFullRankingList(rankings, currentUserId) {
     const isCurrentUser = user.id_usuario === currentUserId;
     const points = user.pontos_total || 0;
     
-    // Check visibility
+    // Check visibility - when visibility is disabled, even the current user sees "Aluno Misterioso"
     const isVisible = user.visibilidade_ranking !== false; // Default to true if undefined
-    const displayName = (isVisible || isCurrentUser) ? (user.nome_completo || 'Usuário') : 'Aluno Misterioso';
+    const displayName = isVisible ? (user.nome_completo || 'Usuário') : 'Aluno Misterioso';
     
     // Determine styling based on position
     let cardClass = 'flex items-center justify-between p-4 rounded-2xl bg-white border border-gray-200 hover:border-gray-300 transition-colors';
