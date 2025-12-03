@@ -8,7 +8,8 @@ export async function fetchUserRankings() {
   try {
     const { data, error } = await supabase
       .from('usuario')
-      .select('id_usuario, nome_completo, pontos_total, visibilidade_ranking')
+      .select('id_usuario, nome_completo, pontos_total, visibilidade_ranking, id_tipo')
+      .eq('id_tipo', 1) // Only select students (id_tipo = 1)
       .order('pontos_total', { ascending: false });
 
     if (error) {
@@ -146,14 +147,15 @@ function updateFullRankingList(rankings, currentUserId) {
       pointsColor = 'text-gray-900';
       arrowIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500"><path d="m18 15-6-6-6 6"/></svg>';
     } else if (position === 2) {
+      cardClass = 'flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-300';
       positionClass = 'flex items-center justify-center w-10 h-10 bg-gradient-to-br from-gray-300 to-gray-400 rounded-xl shadow-md';
       positionText = '2';
       arrowIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500"><path d="m18 15-6-6-6 6"/></svg>';
     } else if (position === 3) {
+      cardClass = 'flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-300';
       positionClass = 'flex items-center justify-center w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow-md';
       positionText = '3';
       pointsColor = 'text-purple-900';
-      cardClass = `flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-300`;
     }
     
     // Add "(Você)" tag for current user

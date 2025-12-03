@@ -26,6 +26,7 @@ async function fetchUserRanking(userId) {
     const { data: positionData } = await supabase
       .from('usuario')
       .select('id_usuario')
+      .eq('id_tipo', 1) // Only consider students for ranking position
       .gte('pontos_total', rankingData.pontos_total || 0)
       .order('pontos_total', { ascending: false });
 
@@ -117,9 +118,23 @@ async function fetchAndApplyProfile() {
       imgEl.alt = profile.nome_completo;
     }
 
-    // Fetch and display user ranking
-    const ranking = await fetchUserRanking(user.id);
-    updateRankingDisplay(ranking.position, ranking.points);
+    // Hide ranking section for professors
+    const rankingSection = document.getElementById('ranking-section');
+    if (profile.id_tipo === 2) {
+      // Professor - hide ranking section
+      if (rankingSection) {
+        rankingSection.style.display = 'none';
+      }
+    } else {
+      // Student - show ranking section
+      if (rankingSection) {
+        rankingSection.style.display = 'block';
+      }
+      
+      // Fetch and display user ranking
+      const ranking = await fetchUserRanking(user.id);
+      updateRankingDisplay(ranking.position, ranking.points);
+    }
   } catch (error) {
     console.error("Erro no configModel:", error.message);
     await handleLogout();
