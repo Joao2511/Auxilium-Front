@@ -46,12 +46,6 @@ export default {
       try {
         alunosCache = await listarAlunosMatriculados(id_disciplina);
         renderizarAlunos(alunosCache);
-        
-        // Update counter
-        const countElement = document.getElementById("alunosCount");
-        if (countElement) {
-          countElement.textContent = alunosCache.length;
-        }
       } catch (error) {
         console.error("Erro ao carregar alunos:", error);
         lista.innerHTML = `
@@ -70,47 +64,35 @@ export default {
               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
                 <circle cx="9" cy="7" r="4"/>
+                <line x1="19" y1="8" x2="19" y2="14"/>
+                <line x1="22" y1="11" x2="16" y2="11"/>
               </svg>
             </div>
-            <p class="text-gray-600 font-medium">Nenhum aluno matriculado</p>
-            <p class="text-sm text-gray-500 mt-2">Aguarde as solicitações de matrícula.</p>
+            <h3 class="text-lg font-semibold text-gray-700 mb-1">Nenhum aluno matriculado</h3>
+            <p class="text-gray-500 text-sm">Não há alunos matriculados nesta disciplina.</p>
           </div>
         `;
         return;
       }
 
-      const html = alunos
-        .map(
-          (a) => `
-        <div class="bg-white border-2 border-gray-200 rounded-2xl p-5 hover:shadow-md hover:border-purple-300 transition-all" data-aluno-id="${a.id_usuario}">
-          <div class="flex items-start justify-between gap-4">
-            <div class="flex-1 min-w-0">
-              <h4 class="text-lg font-bold text-gray-900 mb-1 truncate">${a.nome}</h4>
-              <div class="flex items-center space-x-2 text-sm text-gray-600 mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                  <polyline points="22,6 12,13 2,6"/>
-                </svg>
-                <span class="truncate">${a.email}</span>
+      let html = "";
+      alunos.forEach((a, index) => {
+        html += `
+          <div class="bg-white border border-gray-200 rounded-2xl p-4 hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex-1 min-w-0">
+                <h4 class="font-semibold truncate">${a.nome}</h4>
+                <p class="text-xs text-gray-500 truncate">${a.email}</p>
               </div>
-              <div class="flex items-center space-x-2 text-xs text-gray-500">
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"/>
-                  <polyline points="12 6 12 12 16 14"/>
-                </svg>
-                <span>Matriculado em ${new Date(a.data_inscricao).toLocaleDateString("pt-BR")}</span>
+              <div class="flex gap-2 flex-shrink-0">
+                <button class="btn-remover px-3 py-2 rounded-full bg-gradient-to-br from-red-500 to-red-600 text-white hover:shadow-md transition text-sm" data-index="${index}">
+                  Remover
+                </button>
               </div>
-            </div>
-            <div class="flex-shrink-0">
-              <button class="btn-remover bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-full font-semibold text-sm hover:shadow-lg transition-all active:scale-95 whitespace-nowrap">
-                🗑️ Remover
-              </button>
             </div>
           </div>
-        </div>
-      `
-        )
-        .join("");
+        `;
+      });
 
       lista.innerHTML = html;
 
@@ -120,27 +102,31 @@ export default {
       });
     }
 
-    async function handleRemover(aluno) {
-      // Show confirmation modal
-      const confirmar = confirm(
-        `Tem certeza que deseja remover ${aluno.nome} da disciplina?\n\nEsta ação não pode ser desfeita.`
-      );
+    function handleRemover(aluno) {
+      // Use the new confirmation modal
+      Utils.showConfirmationModal(
+        "Remover aluno?",
+        `Tem certeza que deseja remover ${aluno.nome} da disciplina?\n\nEsta ação não pode ser desfeita.`,
+        "Remover aluno",
+        "Cancelar"
+      ).then((confirmed) => {
+        if (!confirmed) return;
 
-      if (!confirmar) return;
-
-      try {
-        await removerAluno(aluno.id_usuario, id_disciplina);
-        Utils.showMessageToast(
-          "success",
-          "Aluno removido!",
-          `${aluno.nome} foi removido da disciplina.`,
-          3000
-        );
-        await carregarAlunos();
-      } catch (error) {
-        console.error("Erro ao remover aluno:", error);
-        Utils.showMessageToast("error", "Erro ao remover", error.message, 5000);
-      }
+        removerAluno(aluno.id_usuario, id_disciplina)
+          .then(() => {
+            Utils.showMessageToast(
+              "success",
+              "Aluno removido!",
+              `${aluno.nome} foi removido da disciplina.`,
+              3000
+            );
+            return carregarAlunos();
+          })
+          .catch((error) => {
+            console.error("Erro ao remover aluno:", error);
+            Utils.showMessageToast("error", "Erro ao remover", error.message, 5000);
+          });
+      });
     }
 
     // Search functionality

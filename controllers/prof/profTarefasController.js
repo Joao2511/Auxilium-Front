@@ -98,55 +98,70 @@ export default {
         const dados = await listarTarefas(id_disciplina);
         const tpl = document.getElementById("tpl-tarefa");
         lista.innerHTML = "";
-        
-        // Check if template exists
-        if (!tpl) {
-          console.error("Template 'tpl-tarefa' not found");
-          lista.innerHTML = `<div class="text-red-500 p-4">Erro ao carregar template de tarefas</div>`;
-          return;
-        }
-        
-        // Check if dados is an array
-        if (!Array.isArray(dados)) {
-          console.error("Dados de tarefas is not an array:", dados);
-          lista.innerHTML = `<div class="text-red-500 p-4">Erro nos dados de tarefas</div>`;
-          return;
-        }
-        
-        dados.forEach((t) => {
-          const el = tpl.content.cloneNode(true);
-          el.querySelector(".__titulo").textContent = t.titulo;
-          el.querySelector(".__entrega").textContent = new Date(
-            t.data_entrega
-          ).toLocaleString();
-          el.querySelector(".__pontos").textContent = t.pontos_maximos;
-          
-          // Fix the selector to match the actual HTML element
-          const openLink = el.querySelector(".__open");
-          if (openLink) {
-            openLink.setAttribute(
-              "href",
-              `/proftarefa?tid=${t.id_tarefa}`
-            );
-            // Add the data-navigo attribute for proper routing
-            openLink.setAttribute("data-navigo", "");
-          }
-          
-          // Add delete button handler
-          const deleteBtn = el.querySelector(".__delete");
-          if (deleteBtn) {
-            deleteBtn.addEventListener("click", (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleDeletarTarefa(t);
-            });
-          }
-          
-          lista.appendChild(el);
-        });
-        
-        // If no tasks, show a message
-        if (dados.length === 0) {
+
+        if (dados && dados.length > 0) {
+          dados.forEach((t) => {
+            const el = tpl.content.cloneNode(true);
+            
+            // Populate task data
+            el.querySelector(".__titulo").textContent = t.titulo;
+            el.querySelector(".__entrega").textContent = t.data_entrega
+              ? new Date(t.data_entrega).toLocaleDateString("pt-BR")
+              : "—";
+            el.querySelector(".__pontos").textContent = t.pontos_maximos || "—";
+            
+            // Setup links
+            const openLink = el.querySelector(".__open");
+            if (openLink) {
+              openLink.setAttribute(
+                "href",
+                `/proftarefa?tid=${t.id_tarefa}`
+              );
+              openLink.setAttribute("data-navigo", "");
+            }
+            
+            // Setup delete button
+            const deleteButton = el.querySelector(".__delete");
+            if (deleteButton) {
+              deleteButton.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Use the new confirmation modal
+                Utils.showConfirmationModal(
+                  "Deletar tarefa?",
+                  `Tem certeza que deseja deletar a tarefa "${t.titulo}"?\n\nEsta ação não pode ser desfeita e todas as entregas serão perdidas.`,
+                  "Deletar tarefa",
+                  "Cancelar"
+                ).then((confirmed) => {
+                  if (!confirmed) return;
+                  
+                  deletarTarefa(t.id_tarefa)
+                    .then(() => {
+                      Utils.showMessageToast(
+                        "success",
+                        "Tarefa deletada!",
+                        `A tarefa "${t.titulo}" foi removida com sucesso.`,
+                        3000
+                      );
+                      return pintarTarefas();
+                    })
+                    .catch((error) => {
+                      console.error("Erro ao deletar tarefa:", error);
+                      Utils.showMessageToast(
+                        "error",
+                        "Erro ao deletar",
+                        error.message,
+                        5000
+                      );
+                    });
+                });
+              });
+            }
+            
+            lista.appendChild(el);
+          });
+        } else {
           lista.innerHTML = `<div class="text-gray-500 text-center p-8">Nenhuma tarefa cadastrada</div>`;
         }
         
@@ -154,33 +169,6 @@ export default {
       } catch (error) {
         console.error("Erro ao carregar tarefas:", error);
         lista.innerHTML = `<div class="text-red-500 p-4">Erro ao carregar tarefas: ${error.message}</div>`;
-      }
-    }
-
-    async function handleDeletarTarefa(tarefa) {
-      const confirmar = confirm(
-        `Tem certeza que deseja deletar a tarefa "${tarefa.titulo}"?\n\nEsta ação não pode ser desfeita e todas as entregas serão perdidas.`
-      );
-
-      if (!confirmar) return;
-
-      try {
-        await deletarTarefa(tarefa.id_tarefa);
-        Utils.showMessageToast(
-          "success",
-          "Tarefa deletada!",
-          `A tarefa "${tarefa.titulo}" foi removida com sucesso.`,
-          3000
-        );
-        await pintarTarefas();
-      } catch (error) {
-        console.error("Erro ao deletar tarefa:", error);
-        Utils.showMessageToast(
-          "error",
-          "Erro ao deletar",
-          error.message,
-          5000
-        );
       }
     }
 
@@ -244,7 +232,7 @@ export default {
         }
       });
 
-      await pintarAlunos();
+    await pintarAlunos();
     await pintarTarefas();
   },
 };
