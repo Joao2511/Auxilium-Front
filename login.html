@@ -564,6 +564,11 @@
           }
         );
 
+        // Check if response is ok
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
         const data = await res.json();
         const serverVersion = data?.[0]?.versao;
 
@@ -578,10 +583,11 @@
           return;
         }
 
-        if (localVersion != serverVersion) {
+        // Use proper version comparison
+        if (semverCompare(serverVersion, localVersion) > 0) {
           console.log("Nova versão encontrada, limpando cache...");
 
-          if (Capacitor.getPlatform() !== "web") {
+          if (isNativeCapacitor()) {
             try {
               const { Device, WebViewCache, ClearCache } = Capacitor.Plugins;
               const { platform } = await Device.getInfo();
@@ -605,11 +611,6 @@
         console.error("Erro ao obter versão:", err);
       }
     }
-
-
-
-    runAfterDOM(getVersionApp);
-
 
     function getNB() {
       return window.Capacitor?.Plugins?.NativeBiometric || null;
@@ -817,7 +818,6 @@
         }
       });
 
-      runAfterDOM(getVersionApp);
     });
   </script>
 
