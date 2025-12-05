@@ -159,7 +159,7 @@
           Redefinir Senha
         </button>
         
-        <div class="text-center mt-4">
+        <div class="text-center mt-4" style="display: none;">
           <a
             href="../login.html"
             class="text-sm text-white hover:text-white/80 font-semibold underline"
@@ -263,13 +263,13 @@
           Utils.showMessageToast(
             "success",
             "Senha redefinida!",
-            "Sua senha foi atualizada com sucesso. Você será redirecionado para o login."
+            "Senha redefinida com sucesso! Você pode voltar para o aplicativo."
           );
 
-          // Redirect to login page after a short delay
-          setTimeout(() => {
-            window.location.href = "../login.html";
-          }, 2000);
+          // Do NOT redirect to login page
+          // setTimeout(() => {
+          //   window.location.href = "../login.html";
+          // }, 2000);
         } catch (err) {
           console.error(err);
           Utils.showMessageToast(

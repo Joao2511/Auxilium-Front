@@ -104,10 +104,10 @@
           Email Confirmado!
         </h1>
         <p class="text-center text-white opacity-90 mb-8 text-sm">
-          Seu endereço de email foi verificado com sucesso. Agora você pode voltar ao aplicativo e fazer login com suas credenciais.
+          Agora seu email foi verificado, pode voltar para o app!
         </p>
         
-        <div class="w-full bg-white rounded-2xl p-6 shadow-lg mb-6">
+        <div class="w-full bg-white rounded-2xl p-6 shadow-lg mb-6" style="display: none;">
           <div class="flex items-start space-x-3">
             <div class="flex-shrink-0 mt-1">
               <i class="fas fa-info-circle text-blue-500"></i>
@@ -135,6 +135,7 @@
         <button
           id="backToLoginBtn"
           class="w-full h-14 flex justify-center items-center rounded-lg text-white font-medium shadow-sm transition-all active:scale-[.99] bg-gradient-to-b from-[#E83593] to-[#E51B85] mb-4"
+          style="display: none;"
         >
           <i class="fas fa-arrow-left mr-2 text-[14px]"></i>
           Voltar para o Login
@@ -155,18 +156,18 @@
       Utils.showMessageToast(
         "success",
         "Email confirmado!",
-        "Seu email foi verificado com sucesso.",
-        { duration: 3000 }
+        "Agora seu email foi verificado, pode voltar para o app!",
+        { duration: 5000 }
       );
       
       backToLoginBtn?.addEventListener("click", () => {
-        window.location.href = "../login.html";
+        // Do nothing - button is hidden
       });
       
-      // Auto redirect after 10 seconds
-      setTimeout(() => {
-        window.location.href = "../login.html";
-      }, 10000);
+      // Remove auto redirect
+      // setTimeout(() => {
+      //   window.location.href = "../login.html";
+      // }, 10000);
     });
   </script>
 </body>
