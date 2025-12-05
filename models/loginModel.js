@@ -21,7 +21,7 @@ export async function fazerLogin(email, senha) {
       data: null,
       error: {
         message:
-          "Por favor, confirme seu e-mail antes de fazer login. Verifique sua caixa de entrada pelo e-mail de confirmação.",
+          "Sua conta ainda não foi verificada! Verifique seu email.",
       },
     };
   }

@@ -7,6 +7,7 @@ class Utils {
     toast.className = `toast-shadow rounded-xl p-4 mb-3 transform transition-all duration-300 ease-in-out toast-${type} toast-slide-in`;
     toast.style.minWidth = "280px";
     toast.style.maxWidth = "320px";
+    toast.style.opacity = "1";  // Ensure 100% opacity as per specification
 
     const icons = {
       success: '<i class="fas fa-check-circle mr-2"></i>',

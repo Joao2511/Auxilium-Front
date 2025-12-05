@@ -800,8 +800,8 @@
           if (err.message.includes("aguardando aprovação")) {
             userMsg = err.message;
           }
-          else if (err.message.includes("confirme seu e-mail")) {
-            userMsg = "Por favor, verifique seu email e clique no link de confirmação antes de fazer login.";
+          else if (err.message.includes("confirme seu e-mail") || err.message.includes("Email not confirmed")) {
+            userMsg = "Sua conta ainda não foi verificada! Verifique seu email.";
           }
           else if (
             err.message.includes("network") ||

@@ -205,6 +205,8 @@ function attachEventListeners() {
         err.message.includes("fetch")
       ) {
         userMsg = "Falha de conexão. Verifique sua internet.";
+      } else if (err.message.includes("verificad") || err.message.includes("Email not confirmed")) {  // Handles "verificada", "verificado" or "Email not confirmed"
+        userMsg = "Sua conta ainda não foi verificada! Verifique seu email.";
       }
       Utils.showMessageToast("error", "Falha no login", userMsg);
     } finally {
