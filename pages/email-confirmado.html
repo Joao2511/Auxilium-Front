@@ -176,60 +176,79 @@
     
     (async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        // Get token and type from URL parameters
+        const url = new URL(window.location.href);
+        const token = url.searchParams.get('token');
+        const type = url.searchParams.get('type');
         
-        if (user && user.email_confirmed_at) {
-          // First, check if user profile exists
-          const { data: existingProfile, error: selectError } = await supabase
-            .from("usuario")
-            .select("id_usuario")
-            .eq("id_usuario", user.id)
-            .single();
+        console.log("Email confirmation page loaded with token:", token, "type:", type);
+        
+        // Verify the OTP token to authenticate the user
+        if (token && type === "signup") {
+          const { data: verifyData, error: verifyError } = await supabase.auth.verifyOtp({
+            token,
+            type: "signup"
+          });
           
-          if (selectError && selectError.code !== 'PGRST116') { // PGRST116 means no rows returned
-            console.error("Erro ao verificar perfil do usuário:", selectError);
+          if (verifyError) {
+            console.error("Error verifying OTP:", verifyError);
             return;
           }
           
-          // If profile doesn't exist, create it from app_metadata
-          if (!existingProfile && user.app_metadata) {
-            const appData = user.app_metadata;
-            const { error: insertError } = await supabase
+          console.log("OTP verified successfully:", verifyData);
+          
+          // Now get the authenticated user
+          const { data: { user }, error: userError } = await supabase.auth.getUser();
+          
+          if (userError) {
+            console.error("Error getting user:", userError);
+            return;
+          }
+          
+          console.log("Authenticated user:", user);
+          
+          if (user) {
+            // Extract user name from metadata
+            const nome = user.user_metadata?.nome_completo 
+                      || user.user_metadata?.full_name 
+                      || user.email.split("@")[0]
+                      || '';
+            
+            console.log("Creating/updating user profile with data:", {
+              id_usuario: user.id,
+              nome_completo: nome,
+              email_institucional: user.email,
+              email_confirmado: true
+            });
+            
+            // Use upsert to create or update the user profile
+            const { error: upsertError } = await supabase
               .from("usuario")
-              .insert({
+              .upsert({
                 id_usuario: user.id,
-                nome_completo: appData.nome_completo || '',
-                id_tipo: appData.id_tipo || 1,
-                status_conta: appData.status_conta || 'ativo',
-                pontos_total: 0,
-                visibilidade_ranking: true,
+                nome_completo: nome,
+                email_institucional: user.email,
                 email_confirmado: true,
-                email_institucional: user.email
+                // Set default values if creating new record
+                id_tipo: user.user_metadata?.id_tipo || 1,
+                status_conta: user.user_metadata?.status_conta || 'ativo',
+                pontos_total: 0,
+                visibilidade_ranking: true
+              }, {
+                onConflict: 'id_usuario'
               });
             
-            if (insertError) {
-              console.error("Erro ao criar perfil do usuário:", insertError);
+            if (upsertError) {
+              console.error("Error creating/updating user profile:", upsertError);
             } else {
-              console.log("Perfil do usuário criado com sucesso.");
-            }
-          } else {
-            // If profile exists, just update the email confirmation status
-            const { error: updateError } = await supabase
-              .from("usuario")
-              .update({ email_confirmado: true })
-              .eq("id_usuario", user.id);
-            
-            if (updateError) {
-              console.error("Erro ao atualizar status de confirmação de email:", updateError);
-            } else {
-              console.log("Status de confirmação de email atualizado no banco.");
+              console.log("User profile created/updated successfully");
             }
           }
         } else {
-          console.log("Usuário não encontrado ou email ainda não confirmado.");
+          console.log("No token or invalid type in URL");
         }
       } catch (err) {
-        console.error("Erro ao verificar confirmação de email:", err);
+        console.error("Error in email confirmation process:", err);
       }
     })();
   </script>
