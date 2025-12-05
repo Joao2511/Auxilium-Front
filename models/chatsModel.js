@@ -1,7 +1,7 @@
 // src/models/chatsModel.js
 import { supabase } from "../utils/supabaseClient.js";
 
-const IA_API_URL = "http://127.0.0.1:8000";
+const IA_API_URL = "https://undefinedly-pretelephonic-beatriz.ngrok-free.dev";
 
 export default function chatsModel() {
   const input = document.getElementById("message-input");
