@@ -179,15 +179,51 @@
         const { data: { user } } = await supabase.auth.getUser();
         
         if (user && user.email_confirmed_at) {
-          const { error } = await supabase
+          // First, check if user profile exists
+          const { data: existingProfile, error: selectError } = await supabase
             .from("usuario")
-            .update({ email_confirmado: true })
-            .eq("id_usuario", user.id);
+            .select("id_usuario")
+            .eq("id_usuario", user.id)
+            .single();
           
-          if (error) {
-            console.error("Erro ao atualizar status de confirmação de email:", error);
+          if (selectError && selectError.code !== 'PGRST116') { // PGRST116 means no rows returned
+            console.error("Erro ao verificar perfil do usuário:", selectError);
+            return;
+          }
+          
+          // If profile doesn't exist, create it from app_metadata
+          if (!existingProfile && user.app_metadata) {
+            const appData = user.app_metadata;
+            const { error: insertError } = await supabase
+              .from("usuario")
+              .insert({
+                id_usuario: user.id,
+                nome_completo: appData.nome_completo || '',
+                id_tipo: appData.id_tipo || 1,
+                status_conta: appData.status_conta || 'ativo',
+                pontos_total: 0,
+                visibilidade_ranking: true,
+                email_confirmado: true,
+                email_institucional: user.email
+              });
+            
+            if (insertError) {
+              console.error("Erro ao criar perfil do usuário:", insertError);
+            } else {
+              console.log("Perfil do usuário criado com sucesso.");
+            }
           } else {
-            console.log("Status de confirmação de email atualizado no banco.");
+            // If profile exists, just update the email confirmation status
+            const { error: updateError } = await supabase
+              .from("usuario")
+              .update({ email_confirmado: true })
+              .eq("id_usuario", user.id);
+            
+            if (updateError) {
+              console.error("Erro ao atualizar status de confirmação de email:", updateError);
+            } else {
+              console.log("Status de confirmação de email atualizado no banco.");
+            }
           }
         } else {
           console.log("Usuário não encontrado ou email ainda não confirmado.");
