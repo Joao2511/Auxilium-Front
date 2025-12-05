@@ -12,7 +12,7 @@ import { supabase } from "../utils/supabaseClient.js";
 export async function sendResetEmail(email) {
   try {
     // Ensure we're using the correct protocol and removing any trailing slashes
-    const baseUrl = window.location.origin.replace(/\/$/, '');
+    const baseUrl = 'https://auxilium-front-dev.vercel.app';
     const redirectUrl = `${baseUrl}/pages/nova-senha.html`;
     
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
