@@ -48,11 +48,22 @@ export async function fazerLogin(email, senha) {
         id_tipo: appData.id_tipo,
         status_conta: appData.status_conta,
         pontos_total: 0,
-        visibilidade_ranking: true
-      });
+        visibilidade_ranking: true,
+        email_confirmado: true,  // Assume true since they logged in successfully
+        email_institucional: data.user.email  // Add the user's email
+      })
+      .select();  // Add select() to ensure we get the inserted data
 
     if (insertError) {
-      return { data: null, error: insertError };
+      // Check if it's a duplicate key error (user already exists)
+      if (insertError.code === '23505') { // Unique violation
+        // User already exists, continue with login
+        console.log("User profile already exists, continuing with login");
+      } else {
+        // Some other error occurred
+        console.error("Error creating user profile:", insertError);
+        return { data: null, error: insertError };
+      }
     }
 
     // If this is a professor account, also create the professor request

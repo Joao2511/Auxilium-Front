@@ -18,12 +18,22 @@ export async function createUserProfile(userId, fullName, userType, accountStatu
         id_tipo: userType,
         status_conta: accountStatus,
         pontos_total: 0,
-        visibilidade_ranking: true
+        visibilidade_ranking: true,
+        email_confirmado: false,  // Will be set to true when user confirms email
+        email_institucional: null  // Will be set when user updates their profile
       });
 
     if (error) {
-      console.error("Error creating user profile:", error);
-      return { error };
+      // Check if it's a duplicate key error (user already exists)
+      if (error.code === '23505') { // Unique violation
+        // User already exists, this might happen in some edge cases
+        console.log("User profile already exists");
+        return { error: null }; // Continue successfully
+      } else {
+        // Some other error occurred
+        console.error("Error creating user profile:", error);
+        return { error };
+      }
     }
 
     return { error: null };

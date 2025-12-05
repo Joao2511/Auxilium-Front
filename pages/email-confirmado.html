@@ -170,5 +170,32 @@
       // }, 10000);
     });
   </script>
+  
+  <script type="module">
+    import { supabase } from "../utils/supabaseClient.js";
+    
+    (async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user && user.email_confirmed_at) {
+          const { error } = await supabase
+            .from("usuario")
+            .update({ email_confirmado: true })
+            .eq("id_usuario", user.id);
+          
+          if (error) {
+            console.error("Erro ao atualizar status de confirmação de email:", error);
+          } else {
+            console.log("Status de confirmação de email atualizado no banco.");
+          }
+        } else {
+          console.log("Usuário não encontrado ou email ainda não confirmado.");
+        }
+      } catch (err) {
+        console.error("Erro ao verificar confirmação de email:", err);
+      }
+    })();
+  </script>
 </body>
 </html>
